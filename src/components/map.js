@@ -1,4 +1,4 @@
-import { Text, TextMenu, XLineUi, YLineUi, QrCodeUi } from './index'
+import { Text, TextMenu, XLineUi, YLineUi, QrCodeUi, LineMenu, BarCodeUi, XTable } from './index'
 export default [
   {
     id: 'TextUi',
@@ -19,5 +19,17 @@ export default [
   {
     id: 'QrCodeUi',
     component: QrCodeUi
+  },
+  {
+    id: 'LineMenu',
+    component: LineMenu
+  },
+  {
+    id: 'BarCodeUi',
+    component: BarCodeUi
+  },
+  {
+    id: 'XTableUi',
+    component: XTable
   }
 ]

@@ -1,8 +1,8 @@
 <template>
-  <div :id="aimId" ref="drag" class="drag-warp" :class="activeClass" :style="dragStyle" @click.stop="handleSetCurrent" @mousedown="handleMouseDown" @contextmenu="handleContextMenu">
-    <component :is="componentObject.type" v-bind="componentObject.props" :element-id="componentObject.id" :update-id="componentObject.updateId" @complete="init" />
-    <drag-resize v-if="resizeVisible" :component-object="componentObject" @resize-down="handleResizeDown" />
-  </div>
+    <div :id="aimId" ref="drag" class="drag-warp" :class="activeClass" :style="dragStyle" @click.stop="handleSetCurrent" @mousedown="handleMouseDown" @contextmenu="handleContextMenu" @contextmenu.prevent="onContextmenu">
+      <component :is="componentObject.type" v-bind="componentObject.props" :element-id="componentObject.id" :update-id="componentObject.updateId" @complete="init" />
+      <drag-resize v-if="resizeVisible" :component-object="componentObject" @resize-down="handleResizeDown" />
+    </div>  
 </template>
 
 <script>
@@ -12,7 +12,7 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'Drag',
   components: {
-    DragResize
+    DragResize,
   },
   props: {
     componentObject: {
@@ -68,7 +68,7 @@ export default {
       defaultHeight: '',
       width: '',
       height: '',
-      debounceUpdateComponent: Function
+      debounceUpdateComponent: Function,
     }
   },
   destroyed() {
@@ -114,12 +114,29 @@ export default {
       return this.activeClass.includes('is-active')
     }
   },
-  mounted() {
-    // this.debounceUpdateComponent = debounce(200, this.moveEnd);
-  },
   methods: {
+    onContextmenu(event) {
+      this.$contextmenu({
+        items: [
+          { 
+            label: '删除',
+            icon: 'el-icon-delete',
+            customClass: 'a-de',
+            onClick: () => {
+              this.$store.dispatch('components/deleteComponent', this.aimId);
+            } 
+          }
+        ],
+        event,
+        zIndex: 99999,
+        customClass: 'd_menu',
+        minWidth: 18
+      });
+      return false
+    },
     init() {
-      this.initLayoutScheme()
+      this.initLayoutScheme();
+      
     },
     initLayoutScheme() {
       const $drag = this.$refs.drag
@@ -317,4 +334,15 @@ export default {
       }
     }
   }
+  .d_menu {
+    padding: 0 !important;
+    .menu_item {
+      padding: 0 8px !important;
+      line-height: 32px !important;
+      .menu_item_expand_icon {
+        display: none;
+      }
+    }
+  }
+  
 </style>

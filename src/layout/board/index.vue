@@ -22,7 +22,7 @@ export default {
 .board-warp {
     position: relative;
     .canvas-wrapper {
-        width: 460px;
+        width: 768px;
         height: 460px;
         background-color: #fff;
         border-radius: 2px;

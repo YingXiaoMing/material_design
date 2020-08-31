@@ -21,13 +21,28 @@ export default {
     hasBorder: {
       type: Boolean,
       default: false
-    }
+    },
+    fontFamily: {
+      type: String,
+      default: '',
+    },
+    fontSize: {
+      type: String,
+      default: '',
+    },
+    lineHeight: {
+      type: String,
+      default: '',
+    },
   },
   computed: {
     getTextStyle() {
-      const { isBold, hasBorder } = this
+      const { fontFamily, fontSize, lineHeight, isBold, hasBorder } = this;
       let style = {}
       style = {
+        fontFamily,
+        fontSize,
+        lineHeight,
         fontWeight: isBold ? 'bold' : '400',
         border: hasBorder ? '1px solid #000' : '1px solid transparent'
       }
