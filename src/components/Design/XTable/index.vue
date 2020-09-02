@@ -1,7 +1,7 @@
 <template>
     <div :id="elementId" class="table-component">
-        <el-table  size="small" border :data="data" style="width: 100%" :row-style="{height: '16px'}" :cell-style="{padding:2+'px'}">
-            <el-table-column label="序号" type="index" width="45"></el-table-column>
+        <el-table class="XMTable" size="small" border :data="data" style="width: 100%" :row-style="{height: '16px'}" :cell-style="{padding:2+'px'}">
+            <el-table-column label="序号" type="index" width="45" v-if="showSection"></el-table-column>
             <el-table-column v-for="item in columns" :prop="item.prop" :label="item.label" :width="item.width"></el-table-column>
         </el-table>
     </div>
@@ -9,6 +9,10 @@
 <script>
 export default {
     props: {
+        showSection: {
+            type: Boolean,
+            default: true
+        },
         elementId: {
             type: String,
             default: ''
@@ -40,7 +44,6 @@ export default {
     methods: {
         init() {
             this.$emit('complete')
-            console.log(this.text)
         }
     }
 }
@@ -48,7 +51,9 @@ export default {
 
 <style lang="scss">
 .table-component {
-    display: inline-block;
+    .XMTable {
+        display: inline-block;
+    }
 }
 </style>
 

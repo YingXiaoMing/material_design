@@ -13,3 +13,9 @@ export { default as BarCodeUi } from './Design/BarCode'
 export { default as TextMenu } from './public/TextMenu'
 
 export { default as LineMenu } from './public/LineMenu'
+
+export { default as BarCodeMenu } from './public/BarCodeMenu'
+
+export { default as QrCodeMenu } from './public/QrCodeMenu'
+
+export { default as TableMenu } from './public/TableMenu'

@@ -35,7 +35,7 @@ const state = {
     customTable: {
       name: 'customTable',
       type: 'XTableUi',
-      classify: '',
+      classify: 'TableMenu',
       title: '自定义表单',
       instance: false,
       updateId: '',
@@ -44,17 +44,38 @@ const state = {
         clientY: ''
       },
       default: {
-        width: '',
+        width: 662,
         height: '',
         x: '',
         y: ''
       },
       props: {
+        showSection: true,
+        tableData: ["name","standard","total","price","prices","note"],
+        tableDataOption: [{
+          name: '货物名称',
+          key: 'name'
+        },{
+          name: '货物规格',
+          key: 'standard'
+        }, {
+          name: '数量',
+          key: 'total'
+        }, {
+          name: '单价',
+          key: 'price'
+        }, {
+          name: '金额',
+          key: 'prices'
+        }, {
+          name: '备注',
+          key: 'note'
+        }],
         columns: [{
           prop: 'name',
           label: '货物名称'
         }, {
-          prop: 'spec',
+          prop: 'standard',
           label: '货物规格',
           width: 180,
         }, {
@@ -221,7 +242,7 @@ const state = {
           {
             title: '自定义文本',
             id: 'customText',
-            icon: 'education',
+            icon: 'wenben',
             component: {
               type: 'TextUi'
             }
@@ -229,7 +250,7 @@ const state = {
           {
             title: '横线',
             id: 'xLine',
-            icon: 'form',
+            icon: 'hengxian',
             component: {
               type: 'XLineUi'
             }
@@ -237,7 +258,7 @@ const state = {
           {
             title: '竖线',
             id: 'yLine',
-            icon: 'form',
+            icon: 'shuxian',
             component: {
               type: 'YLineUi'
             }
@@ -245,7 +266,7 @@ const state = {
           {
             title: '二维码',
             id: 'qrCode',
-            icon: 'edit',
+            icon: 'ico',
             component: {
               type: 'QrCodeUi'
             }
@@ -253,7 +274,7 @@ const state = {
           {
             title: '条形码',
             id: 'barCode',
-            icon: 'edit',
+            icon: 'icon-life-barcode',
             component: {
               type: 'BarCodeUi'
             }
@@ -261,7 +282,7 @@ const state = {
           {
             title: '表单',
             id: 'customTable',
-            icon: 'edit',
+            icon: 'table',
             component: {
               type: 'XTableUi'
             }
@@ -284,6 +305,15 @@ const mutations = {
         state.storeList.splice(i, 1);
       }
     })
+  },
+  UPDATE_COMPONENT: (state, component) => {
+    state.storeList = state.storeList.map((item) => {
+      let newItem = {...item};
+      if (item.id === component.id) {
+        newItem = component;
+      }
+      return newItem;
+    })
   }
 }
 
@@ -298,6 +328,13 @@ const actions = {
     component.id = id
     const getComponent = Object.assign(component, payload.props)
     commit('ADD_COMPONENT', getComponent)
+  },
+  updateComponent({ commit, state }, payload) {
+    const current = state.storeList.find(item => item.id === payload.id);
+    const newCurrent = JSON.parse(JSON.stringify(current));
+    newCurrent.updateId = new Date().getTime().toString();
+    const component = Object.assign(newCurrent, payload.update);
+    commit('UPDATE_COMPONENT', component);
   },
   deleteComponent({ commit }, id) {
     commit('DELETE_COMPONENT', id);

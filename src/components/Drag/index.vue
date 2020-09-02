@@ -9,6 +9,8 @@
 import { on, off } from '@/utils/dom'
 import DragResize from '@/components/DragResize'
 import { mapGetters } from 'vuex'
+import { debounce } from 'throttle-debounce';
+
 export default {
   name: 'Drag',
   components: {
@@ -74,6 +76,9 @@ export default {
   destroyed() {
     this.clearAllListener()
   },
+  mounted() {
+    this.debounceUpdateComponent = debounce(200, this.moveEnd);
+  },
   computed: {
     ...mapGetters(['activeComponent']),
     dragStyle() {
@@ -134,6 +139,24 @@ export default {
       });
       return false
     },
+    moveEnd() {
+      setTimeout(() => {
+        const {x, y} = this;
+        const dragData = {
+          id: this.aimId,
+          x,
+          y,
+          instance: true,
+          width: this.width || 0,
+          height: this.height || 0,
+          position: {
+            clientX: x,
+            clientY: y
+          },
+        };
+        this.$emit('move-end', dragData);
+      })
+    },
     init() {
       this.initLayoutScheme();
       
@@ -144,7 +167,9 @@ export default {
       const element = $drag.firstElementChild
       const defaultData = this.default
       const canvas = document.querySelector('.drag-canvas-warp.board-canvas')
-      const { width, height } = $drag.getBoundingClientRect()
+      const { width, height } = $drag.getBoundingClientRect();
+      console.log(width);
+      console.log(height);
       const { defaultX, defaultY } = this
       const { top, left } = element.getBoundingClientRect()
       this.board = canvas.getBoundingClientRect()
@@ -153,6 +178,7 @@ export default {
       this.defaultHeight = height
       this.defaultWidth = width
       this.width = width
+      
       if (isInstance) {
         this.x = defaultData.x
         this.y = defaultData.y
@@ -161,9 +187,11 @@ export default {
       } else {
         this.x = defaultX - left
         this.y = defaultY - top
+        this.width = defaultData.width;
+        this.height = defaultData.height;
       }
       this.$nextTick(() => {
-        // this.debounceUpdateComponent();
+        this.debounceUpdateComponent();
       })
     },
     clearAllListener() {
@@ -212,7 +240,7 @@ export default {
       } else {
         this.y = y
       }
-      // this.debounceUpdateComponent();
+      this.debounceUpdateComponent();
     },
     handleMouseUp() {
       off(document, 'mousemove', this.handleMouseMove)
@@ -274,7 +302,7 @@ export default {
           this.height = height
         }
       }
-      // this.debounceUpdateComponent();
+      this.debounceUpdateComponent();
     },
     handleResizeDown(e) {
       const $drag = this.$refs.drag

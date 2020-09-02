@@ -4,11 +4,11 @@
       新感觉设计系统
     </div>
     <div class="handle-area">
-      <div class="preview-btn">
+      <div class="preview-btn" @click="download">
         <i class="el-icon-reading" />
         <span>打印预览</span>
       </div>
-      <div class="preview-btn">
+      <div class="preview-btn" >
         <i class="el-icon-magic-stick" />
         <span>清空画布</span>
       </div>
@@ -17,7 +17,15 @@
 </template>
 <script>
 export default {
-
+  methods: {
+    download() {
+      this.$store.dispatch('components/setActive', '');
+      this.$nextTick(() => {
+        this.$pdf();
+      });
+      
+    }
+  }
 }
 </script>
 

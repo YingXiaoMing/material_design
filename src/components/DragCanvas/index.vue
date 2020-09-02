@@ -1,5 +1,6 @@
 <template>
   <draggable
+    id="canvas_board"
     ref="drag-board"
     class="drag-canvas-warp"
     :list="storeList"
@@ -54,7 +55,7 @@ export default {
         handle: '.handle',
         disabled: false,
         sort: false
-      }
+    }
     }
   },
   methods: {
@@ -85,8 +86,22 @@ export default {
         this.$store.dispatch('components/addComponent', { componentId, props })
       }
     },
-    onMoveEnd() {
-      console.log('不弄虚作假跟你假的是你同学')
+    onMoveEnd(data) {
+      const { height, width, x, y, position, instance, id } = data;
+      const update = {
+        id,
+        update: {
+          default: {
+            height,
+            width,
+            x,
+            y
+          },
+          instance,
+          position
+        }
+      };
+      if (update.id) this.$store.dispatch('components/updateComponent', update);
     }
   }
 }

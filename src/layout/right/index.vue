@@ -1,7 +1,7 @@
 <template>
   <div v-if="activeComponent" class="props-menu-warp" @click.stop>
     <div class="title-area">{{ activeComponent.title }}</div>
-    <component :is="activeComponent.classify" ref="menu" :component="activeComponent" />
+    <component :is="activeComponent.classify" ref="menu" :component="activeComponent" class="context_area" />
   </div>
 </template>
 <script>
@@ -20,6 +20,9 @@ export default {
          padding: 15px;
          background-color: $lightBackground;
          font-weight: bold;
+     }
+     .context_area {
+       padding-left: 4px;
      }
  }
 </style>
