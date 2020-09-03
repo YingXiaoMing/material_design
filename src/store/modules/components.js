@@ -51,6 +51,8 @@ const state = {
       },
       props: {
         showSection: true,
+        cols: 7,
+        showTotal: false,
         tableData: ["name","standard","total","price","prices","note"],
         tableDataOption: [{
           name: '货物名称',
@@ -92,54 +94,54 @@ const state = {
           label: '备注'
         }],
         data: [{
-          name: 'ES300大',
-          spec: '25g*137mm*1400m',
-          total: '1851.24',
-          price: '0.000',
-          prices: '0.0000',
-          note: '107'
+          name: '',
+          spec: '',
+          total: '',
+          price: '',
+          prices: '',
+          note: ''
         },{
-          name: 'ES300大',
-          spec: '25g*137mm*1400m',
-          total: '1851.24',
-          price: '0.000',
-          prices: '0.0000',
-          note: '107'
+          name: '',
+          spec: '',
+          total: '',
+          price: '',
+          prices: '',
+          note: ''
         },{
-          name: 'ES300大',
-          spec: '25g*137mm*1400m',
-          total: '1851.24',
-          price: '0.000',
-          prices: '0.0000',
-          note: '107'
+          name: '',
+          spec: '',
+          total: '',
+          price: '',
+          prices: '',
+          note: ''
         },{
-          name: 'ES300大',
-          spec: '25g*137mm*1400m',
-          total: '1851.24',
-          price: '0.000',
-          prices: '0.0000',
-          note: '107'
+          name: '',
+          spec: '',
+          total: '',
+          price: '',
+          prices: '',
+          note: ''
         },{
-          name: 'ES300大',
-          spec: '25g*137mm*1400m',
-          total: '1851.24',
-          price: '0.000',
-          prices: '0.0000',
-          note: '107'
+          name: '',
+          spec: '',
+          total: '',
+          price: '',
+          prices: '',
+          note: ''
         },{
-          name: 'ES300大',
-          spec: '25g*137mm*1400m',
-          total: '1851.24',
-          price: '0.000',
-          prices: '0.0000',
-          note: '107'
+          name: '',
+          spec: '',
+          total: '',
+          price: '',
+          prices: '',
+          note: ''
         },{
-          name: 'ES300大',
-          spec: '25g*137mm*1400m',
-          total: '1851.24',
-          price: '0.000',
-          prices: '0.0000',
-          note: '107'
+          name: '',
+          spec: '',
+          total: '',
+          price: '',
+          prices: '',
+          note: ''
         }]
       }
     },
@@ -183,6 +185,27 @@ const state = {
       props: {
         width: 100,
         height: 1
+      }
+    },
+    rectangle: {
+      name: 'rectangle',
+      type: 'RectangleUi',
+      classify: '',
+      title: '边框',
+      instance: false,
+      updateId: '',
+      position: {
+        clientX: '',
+        clientY: ''
+      },
+      default: {
+        width: '',
+        height: '',
+        x: '',
+        y: ''
+      },
+      props: {
+
       }
     },
     barCode: {
@@ -286,6 +309,14 @@ const state = {
             component: {
               type: 'XTableUi'
             }
+          },
+          {
+            title: '边框',
+            id: 'rectangle',
+            icon: 'biankuang',
+            component: {
+              type: 'YLineUi'
+            }
           }
         ]
       }
@@ -298,6 +329,10 @@ const mutations = {
   },
   SET_ACTIVE: (state, id) => {
     state.activeComponent = state.storeList.find(item => item.id === id) || ''
+  },
+  CLEAR_COMPONENT: (state, payload) => {
+    state.storeList = [];
+    state.activeComponent = '';
   },
   DELETE_COMPONENT: (state, id) => {
     state.storeList.map((v, i) => {
@@ -329,6 +364,9 @@ const actions = {
     const getComponent = Object.assign(component, payload.props)
     commit('ADD_COMPONENT', getComponent)
   },
+  clearAllComponent({ commit }, payload) {
+    commit('CLEAR_COMPONENT');
+  },
   updateComponent({ commit, state }, payload) {
     const current = state.storeList.find(item => item.id === payload.id);
     const newCurrent = JSON.parse(JSON.stringify(current));
@@ -342,7 +380,7 @@ const actions = {
   },
   setActive({ commit }, id) {
     commit('SET_ACTIVE', id || '')
-  }
+  },
 }
 
 export default {

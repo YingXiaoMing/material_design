@@ -8,7 +8,7 @@
         <i class="el-icon-reading" />
         <span>打印预览</span>
       </div>
-      <div class="preview-btn" >
+      <div class="preview-btn" @click="clearData">
         <i class="el-icon-magic-stick" />
         <span>清空画布</span>
       </div>
@@ -23,7 +23,10 @@ export default {
       this.$nextTick(() => {
         this.$pdf();
       });
-      
+    },
+    clearData() {
+      // clearAllComponent
+      this.$store.dispatch('components/clearAllComponent');
     }
   }
 }

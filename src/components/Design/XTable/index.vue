@@ -1,6 +1,8 @@
 <template>
     <div :id="elementId" class="table-component">
-        <el-table class="XMTable" size="small" border :data="data" style="width: 100%" :row-style="{height: '16px'}" :cell-style="{padding:2+'px'}">
+        <el-table class="XMTable" size="small" border :data="data"
+        style="width: 100%" :row-style="{height: '28px'}" :cell-style="{padding:2+'px'}"
+        :show-summary="showTotal">
             <el-table-column label="序号" type="index" width="45" v-if="showSection"></el-table-column>
             <el-table-column v-for="item in columns" :prop="item.prop" :label="item.label" :width="item.width"></el-table-column>
         </el-table>
@@ -28,6 +30,10 @@ export default {
         data: {
             type: Array,
             default: []
+        },
+        showTotal: {
+            type: Boolean,
+            default: false
         }
     },
     computed: {

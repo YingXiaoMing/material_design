@@ -19,3 +19,5 @@ export { default as BarCodeMenu } from './public/BarCodeMenu'
 export { default as QrCodeMenu } from './public/QrCodeMenu'
 
 export { default as TableMenu } from './public/TableMenu'
+
+export { default as RectangleUi } from './Design/Rectangle'
