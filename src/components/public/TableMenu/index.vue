@@ -7,9 +7,9 @@
             <el-form-item label="表格显示行数(行):">
                 <el-input-number v-model="currentComponent.props.cols" :min="1" :max="7" @change="colChangeHandle"></el-input-number>
             </el-form-item>
-            <el-form-item label="显示合计金额行:">
+            <!-- <el-form-item label="显示合计金额行:">
                 <el-checkbox v-model="currentComponent.props.showTotal"></el-checkbox>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="表格设计:">
                 <el-checkbox-group v-model="currentComponent.props.tableData" @change="handleTableOptionsChange">
                     <draggable :options="{animation: 380}" v-model="currentComponent.props.tableDataOption" 
