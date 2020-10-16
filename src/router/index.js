@@ -31,12 +31,17 @@ Vue.use(Router)
 export const constantRoutes = [
   {
     path: '/',
-    redirect: 'Create'
+    redirect: 'List'
   },
   {
     path: '/create',
     name: 'Create',
     component: () => import('@/views/create/index')
+  },
+  {
+    path: '/list',
+    name: 'List',
+    component: () => import('@/views/list/index'),
   }
 ]
 

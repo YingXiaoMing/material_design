@@ -4,6 +4,9 @@
       新感觉设计系统
     </div>
     <div class="handle-area">
+      <div class="preview-btn" @click="saveData">
+        <span>保存模板</span>
+      </div>
       <div class="preview-btn" @click="download">
         <i class="el-icon-reading" />
         <span>打印预览</span>
@@ -16,17 +19,28 @@
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex'
+import Cookies from 'js-cookie'
 export default {
+  computed: {
+    ...mapGetters(['storeList']),
+  },
   methods: {
     download() {
       this.$store.dispatch('components/setActive', '');
       this.$nextTick(() => {
-        this.$pdf();
+        this.$pdf('canvas_board');
       });
     },
     clearData() {
       // clearAllComponent
       this.$store.dispatch('components/clearAllComponent');
+    },
+    saveData() {
+      console.log('我正在看着你看着你目不转睛');
+      const res = JSON.stringify(this.storeList);
+      Cookies.set('app_component', res);
+      this.$message.success('保存成功');
     }
   }
 }

@@ -5,8 +5,9 @@ import JsPDF from "jspdf";
 const PDF = {};
 
 PDF.install = function(Vue, options) {
-    Vue.prototype.$pdf = function() {
-        html2canvas(document.getElementById('canvas_board')).then(canvas => {
+    Vue.prototype.$pdf = function(id) {
+        // canvas_board
+        html2canvas(document.getElementById(id)).then(canvas => {
             const [AWidth, AHeight] = [595.28, 841.89]; // a4;
             let position = 0;
             let { width: CWidth, height: CHeight } = canvas;

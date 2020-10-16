@@ -324,6 +324,9 @@ const state = {
   }
 }
 const mutations = {
+  SET_STORELIST: (state, payload) => {
+    state.storeList = payload;
+  },
   ADD_COMPONENT: (state, payload) => {
     state.storeList.push(payload)
   },
@@ -366,6 +369,9 @@ const actions = {
   },
   clearAllComponent({ commit }, payload) {
     commit('CLEAR_COMPONENT');
+  },
+  setComponentsList({ commit, state }, payload) {
+    commit('SET_STORELIST', payload);
   },
   updateComponent({ commit, state }, payload) {
     const current = state.storeList.find(item => item.id === payload.id);
