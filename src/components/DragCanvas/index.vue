@@ -101,6 +101,8 @@ export default {
           position
         }
       };
+      console.log('拖拽结束后显示组件的长宽高');
+      console.log(update);
       if (update.id) this.$store.dispatch('components/updateComponent', update);
     }
   }

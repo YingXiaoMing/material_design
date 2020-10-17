@@ -139,24 +139,6 @@ export default {
       });
       return false
     },
-    moveEnd() {
-      setTimeout(() => {
-        const {x, y} = this;
-        const dragData = {
-          id: this.aimId,
-          x,
-          y,
-          instance: true,
-          width: this.width || 0,
-          height: this.height || 0,
-          position: {
-            clientX: x,
-            clientY: y
-          },
-        };
-        this.$emit('move-end', dragData);
-      })
-    },
     init() {
       this.initLayoutScheme();
       
@@ -177,8 +159,7 @@ export default {
       this.offsetTop = top
       this.defaultHeight = height
       this.defaultWidth = width
-      this.width = width
-      
+      this.width = width;
       if (isInstance) {
         this.x = defaultData.x
         this.y = defaultData.y

@@ -17,8 +17,8 @@ const state = {
         clientY: ''
       },
       default: {
-        width: '',
-        height: '',
+        width: 95,
+        height: 28,
         x: '',
         y: ''
       },
@@ -157,8 +157,8 @@ const state = {
         clientY: ''
       },
       default: {
-        width: '',
-        height: '',
+        width: 160,
+        height: 150,
         x: '',
         y: ''
       },
@@ -220,8 +220,8 @@ const state = {
         clientY: ''
       },
       default: {
-        width:'',
-        height: '',
+        width: 234,
+        height: 92,
         x: '',
         y: ''
       },
