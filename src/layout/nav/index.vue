@@ -37,8 +37,8 @@ export default {
       this.$store.dispatch('components/clearAllComponent');
     },
     saveData() {
-      console.log('我正在看着你看着你目不转睛');
       const res = JSON.stringify(this.storeList);
+      console.log(res);
       Cookies.set('app_component', res);
       this.$message.success('保存成功');
     }
