@@ -1,23 +1,45 @@
 <template>
-    <div :id="aimId" ref="drag" class="drag-warp" :class="activeClass" :style="dragStyle" @click.stop="handleSetCurrent" @mousedown="handleMouseDown" @contextmenu="handleContextMenu" @contextmenu.prevent="onContextmenu">
-      <component :is="componentObject.type" v-bind="componentObject.props" :element-id="componentObject.id" :update-id="componentObject.updateId" @complete="init" />
-      <drag-resize v-if="resizeVisible" :component-object="componentObject" @resize-down="handleResizeDown" />
-    </div>  
+  <div
+    :id="aimId"
+    ref="drag"
+    class="drag-warp"
+    :class="activeClass"
+    :style="dragStyle"
+    @click.stop="handleSetCurrent"
+    @mousedown="handleMouseDown"
+    @contextmenu="handleContextMenu"
+    @contextmenu.prevent="onContextmenu"
+  >
+    <component
+      :is="componentObject.type"
+      v-bind="componentObject.properties"
+      :element-id="componentObject.id"
+      @complete="init"
+      @updateInputText="updateInputText"
+    />
+    <drag-resize v-if="resizeVisible" :component-object="componentObject" @resize-down="handleResizeDown" />
+  </div>
 </template>
 
 <script>
 import { on, off } from '@/utils/dom'
 import DragResize from '@/components/DragResize'
 import { mapGetters } from 'vuex'
-import { debounce } from 'throttle-debounce';
+import { debounce } from 'throttle-debounce'
 
 export default {
   name: 'Drag',
   components: {
-    DragResize,
+    DragResize
   },
   props: {
     componentObject: {
+      type: Object,
+      default() {
+        return {}
+      }
+    },
+    attribute: {
       type: Object,
       default() {
         return {}
@@ -38,10 +60,6 @@ export default {
     defaultY: {
       type: Number,
       default: 0
-    },
-    updateId: {
-      type: String,
-      default: ''
     },
     default: {
       type: Object,
@@ -70,14 +88,21 @@ export default {
       defaultHeight: '',
       width: '',
       height: '',
-      debounceUpdateComponent: Function,
+      debounceUpdateComponent: Function
     }
   },
   destroyed() {
     this.clearAllListener()
   },
+  created() {
+    this.$bus.on('AdjustPage', () => {
+      // this.initLayoutScheme();
+      console.log('调整页面的界面')
+    })
+  },
   mounted() {
-    this.debounceUpdateComponent = debounce(200, this.moveEnd);
+    this.debounceUpdateComponent = debounce(200, this.moveEnd)
+    window.addEventListener('keydown', this.onKeyDown, true)
   },
   computed: {
     ...mapGetters(['activeComponent']),
@@ -98,7 +123,7 @@ export default {
       if (id === this.componentObject.id) {
         result.push('is-active')
       }
-      if (this.componentObject.type === 'BarcodeUi') {
+      if (this.componentObject.type === 'BarCode') {
         result.push('barcode-ui')
       }
       if (this.isLine) {
@@ -107,51 +132,70 @@ export default {
       return result
     },
     isLine() {
-      return this.componentObject.type === 'XLineUi' || this.componentObject.type === 'YLineUi' || this.componentObject.type === 'RectangleUi'
+      return this.componentObject.type === 'H.Line' || this.componentObject.type === 'V.Line' || this.componentObject.type === 'RectangleUi'
     },
     resizeDisabledY() {
-      return this.componentObject.type === 'XLineUi'
+      return this.componentObject.type === 'H.Line'
     },
     resizeDisabledX() {
-      return this.componentObject.type === 'YLineUi'
+      return this.componentObject.type === 'V.Line'
     },
     resizeVisible() {
       return this.activeClass.includes('is-active')
     }
   },
   methods: {
+    onKeyDown(event) {
+      switch (event.keyCode) {
+        case 37:
+          console.log('左箭头')
+          break
+        case 38:
+          console.log('上箭头')
+          break
+        case 39:
+          console.log('右箭头')
+          break
+        case 40:
+          console.log('下箭头')
+          break
+        default:
+          break
+      }
+    },
     onContextmenu(event) {
       this.$contextmenu({
         items: [
-          { 
+          {
             label: '删除',
             icon: 'el-icon-delete',
             customClass: 'a-de',
             onClick: () => {
-              this.$store.dispatch('components/deleteComponent', this.aimId);
-            } 
+              this.$store.dispatch('components/deleteComponent', this.aimId)
+            }
           }
         ],
         event,
         zIndex: 99999,
         customClass: 'd_menu',
         minWidth: 18
-      });
+      })
       return false
     },
     init() {
-      this.initLayoutScheme();
-      
+      this.initLayoutScheme()
+    },
+    updateInputText(text) {
+      this.componentObject.properties.text = text
     },
     initLayoutScheme() {
       const $drag = this.$refs.drag
       const isInstance = this.isInstance
       const element = $drag.firstElementChild
-      const defaultData = this.default
-      const canvas = document.querySelector('.drag-canvas-warp.board-canvas')
-      const { width, height } = $drag.getBoundingClientRect();
-      console.log(width);
-      console.log(height);
+      const defaultData = this.attribute
+      // const canvas = document.querySelector('.drag-canvas-warp.board-canvas')
+      const canvas = document.querySelector('#canvas_board')
+      const { width, height } = $drag.getBoundingClientRect()
       const { defaultX, defaultY } = this
       const { top, left } = element.getBoundingClientRect()
       this.board = canvas.getBoundingClientRect()
@@ -159,20 +203,23 @@ export default {
       this.offsetTop = top
       this.defaultHeight = height
       this.defaultWidth = width
-      this.width = width;
+      this.width = width
+      console.log('检测数据生成')
+      console.log(element.getBoundingClientRect())
+      console.log(width)
       if (isInstance) {
-        this.x = defaultData.x
-        this.y = defaultData.y
+        this.x = defaultData.x_position
+        this.y = defaultData.y_position
         this.width = defaultData.width
         this.height = defaultData.height || ''
       } else {
         this.x = defaultX - left
         this.y = defaultY - top
-        this.width = defaultData.width;
-        this.height = defaultData.height;
+        this.width = defaultData.width
+        this.height = defaultData.height
       }
       this.$nextTick(() => {
-        this.debounceUpdateComponent();
+        this.debounceUpdateComponent()
       })
     },
     clearAllListener() {
@@ -182,10 +229,12 @@ export default {
       off(document, 'mouseup', this.handleMouseUp)
     },
     handleMouseDown(e) {
+      console.log('你已经选择拖着组件')
       const $drag = e.path.find((item) => item.className.includes('drag-warp'))
       const { top, left } = $drag.getBoundingClientRect()
       this.downX = e.clientX - left
       this.downY = e.clientY - top
+
       on(document, 'mousemove', this.handleMouseMove)
       on(document, 'mouseup', this.handleMouseUp)
       this.handleSetCurrent()
@@ -201,12 +250,23 @@ export default {
       const aim = this.aimId
       const clientX = e.clientX
       const clientY = e.clientY
-      const boardHeight = this.board.height
-      const boardWidth = this.board.width
+      const $drag = this.$refs.drag
+
+      const canvasImg = document.querySelector('#canvas_board')
+      const canvasRect = canvasImg.getBoundingClientRect()
+      const boardHeight = canvasRect.height
+      const boardWidth = canvasRect.width
+      // const boardHeight = this.board.height
+      // const boardWidth = this.board.width
       const x = clientX - this.offsetLeft - this.downX
       const y = clientY - this.offsetTop - this.downY
       const $element = document.getElementById(aim)
       const { width, height } = $element.getBoundingClientRect()
+      console.log('I CASR SAD')
+      console.log(width)
+      console.log(x)
+      console.log(width + x)
+      console.log(boardWidth)
       if (x <= 0) {
         this.x = 0
       } else if ((width + x) >= boardWidth) {
@@ -221,7 +281,7 @@ export default {
       } else {
         this.y = y
       }
-      this.debounceUpdateComponent();
+      this.debounceUpdateComponent()
     },
     handleMouseUp() {
       off(document, 'mousemove', this.handleMouseMove)
@@ -234,13 +294,8 @@ export default {
           id: this.aimId,
           x,
           y,
-          instance: true,
           width: this.width || 0,
-          height: this.height || 0,
-          position: {
-            clientX: x,
-            clientY: y
-          }
+          height: this.height || 0
         }
         this.$emit('move-end', dragData)
       })
@@ -283,13 +338,17 @@ export default {
           this.height = height
         }
       }
-      this.debounceUpdateComponent();
+      this.debounceUpdateComponent()
     },
     handleResizeDown(e) {
       const $drag = this.$refs.drag
       const { width, height } = $drag.getBoundingClientRect()
-      this.resizeOffsetRight = this.board.width - $drag.offsetLeft - width
-      this.resizeOffsetBottom = this.board.height - $drag.offsetTop - height
+      const canvasImg = document.querySelector('.drag-canvas-warp.board-canvas')
+      const canvasRect = canvasImg.getBoundingClientRect()
+      const boardHeight = canvasRect.heigth
+      const boardWidth = canvasRect.width
+      this.resizeOffsetRight = boardWidth - $drag.offsetLeft - width
+      this.resizeOffsetBottom = boardHeight - $drag.offsetTop - height
       this.resizeDownX = e.clientX
       this.resizeDownY = e.clientY
       this.downWidth = width
@@ -353,5 +412,5 @@ export default {
       }
     }
   }
-  
+
 </style>

@@ -9,14 +9,15 @@
   >
     <template v-for="item in storeList">
       <drag
+        ref="distanceComponent"
         :key="item.id"
-        :default-x="item.position.clientX"
-        :default-y="item.position.clientY"
+        :default-x="item.properties.x_position"
+        :default-y="item.properties.y_position"
+        :is-instance="item.isInstance"
         :aim-id="item.id"
-        :update-id="item.updateId"
         :component-object="item"
-        :is-instance="item.instance"
-        :default="item.default"
+        :attribute="item.properties"
+        :default="item.properties"
         @move-end="onMoveEnd"
       />
     </template>
@@ -26,6 +27,8 @@
 import draggable from 'vuedraggable'
 import { mapGetters } from 'vuex'
 import Drag from '@/components/Drag'
+import { on } from '@/utils/dom'
+import { debounce } from '@/utils'
 export default {
   components: {
     draggable,
@@ -44,7 +47,7 @@ export default {
     this.init()
   },
   computed: {
-    ...mapGetters(['storeList', 'activeComponent']),
+    ...mapGetters(['storeList', 'activeComponent', 'vw', 'vh']),
     getOptions() {
       return {
         group: {
@@ -55,12 +58,25 @@ export default {
         handle: '.handle',
         disabled: false,
         sort: false
+      }
     }
+  },
+  watch: {
+    vw(newValue, oldValue) {
     }
   },
   methods: {
     init() {
       this.initLayoutData()
+    },
+    addListener() {
+      // this.debounceResizeChange = debounce(300, this.onWindowResize);
+      // on(window, 'resize', this.debounceResizeChange);
+      // on(window, 'keyup', this.onDeleteKeyUp);
+    },
+    onWindowResize() {
+      // this.initLayoutData();
+
     },
     initLayoutData() {
       const $board = this.$refs['drag-board'].$el
@@ -71,57 +87,50 @@ export default {
       this.top = top
     },
     onAdd(el) {
+      console.log('添加到组件模块页面')
       const { clientX, clientY } = el.originalEvent
       const componentId = el.item.getAttribute('data-component-id')
-      const props = {
-        position: {
-          clientX,
-          clientY
-        }
+      const properties = {
+        x_position: clientX,
+        y_position: clientY
       }
       const xArea = clientX < this.right && clientX > this.left
       const yArea = clientY < this.bottom && clientX > this.top
       if (xArea && yArea) {
         // 添加组件模块
-        this.$store.dispatch('components/addComponent', { componentId, props })
+        this.$store.dispatch('components/addComponent', { componentId, properties })
       }
     },
     onMoveEnd(data) {
-      const { height, width, x, y, position, instance, id } = data;
+      const { height, width, x, y, id } = data
       const update = {
         id,
         update: {
-          default: {
-            height,
-            width,
-            x,
-            y
-          },
-          instance,
-          position
+          height,
+          width,
+          x_position: x,
+          y_position: y
         }
-      };
-      console.log('拖拽结束后显示组件的长宽高');
-      console.log(update);
-      if (update.id) this.$store.dispatch('components/updateComponent', update);
+      }
+      if (update.id) this.$store.dispatch('components/updateComponent', update)
     }
   }
 }
 </script>
 <style lang="scss">
 .drag-canvas-warp {
-    * {
-        user-select: none;
-    }
-    .item {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-        opacity: 0;
-        z-index: -1;
-    }
+  * {
+      user-select: none;
+  }
+  .item {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      opacity: 0;
+      z-index: -1;
+  }
 }
 </style>
 

@@ -1,13 +1,13 @@
 <template>
-    <div :id="aimId" ref="drag" class="drag-warp"  :style="dragStyle" >
-      <component :is="componentObject.type" v-bind="componentObject.props" :element-id="componentObject.id" :update-id="componentObject.updateId" @complete="init" />
-    </div>  
+  <div :id="aimId" ref="drag" class="drag-warp" :style="dragStyle">
+    <component :is="componentObject.type" v-bind="componentObject.props" :element-id="componentObject.id" @complete="init" />
+  </div>
 </template>
 
 <script>
 import { on, off } from '@/utils/dom'
 import { mapGetters } from 'vuex'
-import { debounce } from 'throttle-debounce';
+import { debounce } from 'throttle-debounce'
 
 export default {
   name: 'Drag',
@@ -33,10 +33,6 @@ export default {
     defaultY: {
       type: Number,
       default: 0
-    },
-    updateId: {
-      type: String,
-      default: ''
     },
     default: {
       type: Object,
@@ -65,14 +61,14 @@ export default {
       defaultHeight: '',
       width: '',
       height: '',
-      debounceUpdateComponent: Function,
+      debounceUpdateComponent: Function
     }
   },
   destroyed() {
     this.clearAllListener()
   },
   mounted() {
-    this.debounceUpdateComponent = debounce(200, this.moveEnd);
+    this.debounceUpdateComponent = debounce(200, this.moveEnd)
   },
   computed: {
     ...mapGetters(['activeComponent']),
@@ -95,11 +91,11 @@ export default {
     },
     resizeDisabledX() {
       return this.componentObject.type === 'YLineUi'
-    },
+    }
   },
   methods: {
     init() {
-      this.initLayoutScheme();
+      this.initLayoutScheme()
     },
     initLayoutScheme() {
       const $drag = this.$refs.drag
@@ -107,9 +103,7 @@ export default {
       const element = $drag.firstElementChild
       const defaultData = this.default
       const canvas = document.querySelector('.moban_board')
-      const { width, height } = $drag.getBoundingClientRect();
-      console.log(width);
-      console.log(height);
+      const { width, height } = $drag.getBoundingClientRect()
       const { defaultX, defaultY } = this
       const { top, left } = element.getBoundingClientRect()
       this.board = canvas.getBoundingClientRect()
@@ -118,7 +112,7 @@ export default {
       this.defaultHeight = height
       this.defaultWidth = width
       this.width = width
-      
+
       if (isInstance) {
         this.x = defaultData.x
         this.y = defaultData.y
@@ -127,11 +121,11 @@ export default {
       } else {
         this.x = defaultX - left
         this.y = defaultY - top
-        this.width = defaultData.width;
-        this.height = defaultData.height;
+        this.width = defaultData.width
+        this.height = defaultData.height
       }
       this.$nextTick(() => {
-        this.debounceUpdateComponent();
+        this.debounceUpdateComponent()
       })
     },
     moveEnd() {
@@ -151,7 +145,7 @@ export default {
         }
         this.$emit('move-end', dragData)
       })
-    },
+    }
   }
 }
 </script>
@@ -204,5 +198,5 @@ export default {
       }
     }
   }
-  
+
 </style>

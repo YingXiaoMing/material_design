@@ -1,85 +1,235 @@
 import axios from 'axios'
-import { MessageBox, Message } from 'element-ui'
+import * as local from '@/utils/local'
+import router from '../router'
 import store from '@/store'
-import { getToken } from '@/utils/auth'
+import * as env from './env'
+import {
+  getToken
+} from '@/utils/auth'
 
-// create an axios instance
-const service = axios.create({
-  baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
-  // withCredentials: true, // send cookies when cross-domain requests
-  timeout: 5000 // request timeout
+import {
+  Notification,
+  MessageBox,
+  Message
+} from 'element-ui'
+
+let cancel
+const promiseArr = {}
+const CancelToken = axios.CancelToken
+
+axios.interceptors.request.use(config => {
+  return config
+}, error => {
+  return Promise.reject(error)
 })
 
-// request interceptor
-service.interceptors.request.use(
-  config => {
-    // do something before request is sent
-
-    if (store.getters.token) {
-      // let each request carry token
-      // ['X-Token'] is a custom headers key
-      // please modify it according to the actual situation
-      config.headers['X-Token'] = getToken()
-    }
-    return config
-  },
-  error => {
-    // do something with request error
-    console.log(error) // for debug
-    return Promise.reject(error)
+axios.interceptors.response.use(response => {
+  // console.log('axios interceptors: ', response)
+  let errorMessage = ''
+  if (typeof response.data !== 'object') {
+    return response.data
   }
-)
-
-// response interceptor
-service.interceptors.response.use(
-  /**
-   * If you want to get http information such as headers or status
-   * Please return  response => response
-  */
-
-  /**
-   * Determine the request status by custom code
-   * Here is just an example
-   * You can also judge the status by HTTP Status Code
-   */
-  response => {
-    const res = response.data
-
-    // if the custom code is not 20000, it is judged as an error.
-    if (res.code !== 20000) {
-      Message({
-        message: res.message || 'Error',
-        type: 'error',
-        duration: 5 * 1000
-      })
-
-      // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
-      if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
-        // to re-login
-        MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
-          confirmButtonText: 'Re-Login',
-          cancelButtonText: 'Cancel',
-          type: 'warning'
-        }).then(() => {
-          store.dispatch('user/resetToken').then(() => {
-            location.reload()
-          })
+  if (response.data.failureReason && !response.data.isSuccess) {
+    errorMessage = response.data.failureReason || '系统繁忙，请稍后重试'
+  }
+  if (errorMessage) {
+    Notification({
+      title: '错误',
+      message: errorMessage,
+      type: 'error'
+    })
+    return Promise.reject(response.data)
+  }
+  return response.data.payload
+}, error => {
+  if (error && error.response) {
+    if (error.response.data.type === 'application/json') {
+      var reader = new FileReader()
+      reader.onload = (e) => {
+        const errMsg = JSON.parse(e.target.result)
+        error.message = errMsg.failureReason
+        Notification({
+          title: '错误',
+          message: error.message,
+          type: 'error'
         })
       }
-      return Promise.reject(new Error(res.message || 'Error'))
-    } else {
-      return res
+      reader.readAsText(error.response.data)
+      return Promise.reject(error.response)
     }
-  },
-  error => {
-    console.log('err' + error) // for debug
-    Message({
-      message: error.message,
-      type: 'error',
-      duration: 5 * 1000
-    })
-    return Promise.reject(error)
-  }
-)
+    error.message = error.response.data.failureReason
+    // switch (error.response.status) {
+    //   case 400:
+    //     // error.message = '错误请求'
+    //     break
 
-export default service
+    //   default:
+    //     error.message = `连接错误${error.response.status}`
+    // }
+  } else {
+    error.message = '连接到服务器失败'
+  }
+
+  Notification({
+    title: '错误',
+    message: error.message,
+    type: 'error'
+  })
+
+  if (error.response.status == 401) {
+    router.replace({
+      path: '/401',
+      query: {
+        redirect: router.currentRoute.fullPath
+      }
+    })
+  }
+  // 授权超时
+  if (error.response.status == 401009) {
+    local.remove()
+    router.replace({
+      path: '/login',
+      query: {
+        redirect: router.currentRoute.fullPath
+      }
+    })
+  }
+
+  return Promise.reject(error.response)
+})
+
+// axios.defaults.baseURL = env.VUE_APP_ADMIN_API
+axios.defaults.baseURL = env.VUE_APP_ADMIN_API
+axios.defaults.headers = {
+  'Accept': 'application/json',
+  'Content-Type': 'application/json'
+}
+axios.defaults.timeout = 600000
+
+// 拼接参数
+const formatParam = (params) => {
+  if (!params) return ''
+
+  let result = ''
+  Object.keys(params).map((key, index) => {
+    const val = params[key]
+    if ((typeof (val) === 'object') && val.constructor == Array) {
+      for (let i = 0; i < val.length; i++) {
+        const element = val[i]
+        if (typeof (element) !== 'undefined' && element != null && element !== '') {
+          result += result.length <= 0
+            ? `?${key}=${element}`
+            : `&${key}=${element}`
+        }
+      }
+    } else if (typeof (val) !== 'undefined' && val != null && val !== '') {
+      result += result.length <= 0
+        ? `?${key}=${val}`
+        : `&${key}=${val}`
+    }
+  })
+
+  return result
+}
+
+export default {
+  get(url, param, responseType = 'application/json',
+    timeout = 60000) {
+    url += formatParam(param)
+    return new Promise((resolve, reject) => {
+      axios({
+        method: 'get',
+        headers: {
+          'Authorization': `bearer ${local.get('auth_token')}`
+        },
+        url,
+        timeout,
+        responseType: responseType,
+        // params: param,
+        cancelToken: new CancelToken(c => {
+          cancel = c
+        })
+      }).then(res => {
+        resolve(res)
+      }).catch(function(error) {
+        reject(error)
+      })
+    })
+  },
+  post(url, param, responseType = 'application/json',
+    timeout = 60000) {
+    return new Promise((resolve, reject) => {
+      axios({
+        method: 'post',
+        headers: {
+          'Authorization': `bearer ${local.get('auth_token')}`
+        },
+        url,
+        timeout,
+        responseType: responseType,
+        data: param,
+        // params: param,
+        cancelToken: new CancelToken(c => {
+          cancel = c
+        })
+      }).then(res => {
+        resolve(res)
+      }).catch(function(error) {
+        reject(error)
+      })
+    })
+  },
+  put(url, param, responseType = 'application/json', timeout = 60000) {
+    return new Promise((resolve, reject) => {
+      axios({
+        method: 'put',
+        headers: {
+          'Authorization': `bearer ${local.get('auth_token')}`
+        },
+        url,
+        timeout,
+        responseType: responseType,
+        data: param,
+        cancelToken: new CancelToken(c => {
+          cancel = c
+        })
+      }).then(res => {
+        resolve(res)
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+  delete(url, param, responseType = 'application/json',
+    timeout = 60000) {
+    url += formatParam(param)
+    return new Promise((resolve, reject) => {
+      axios({
+        method: 'delete',
+        headers: {
+          'Authorization': `bearer ${local.get('auth_token')}`
+        },
+        url,
+        timeout,
+        responseType: responseType,
+        // data: param,
+        cancelToken: new CancelToken(c => {
+          cancel = c
+        })
+      }).then(res => {
+        resolve(res)
+        // if (!utils.IsStringNull(JSON.stringify(res)) && res.code == '1') {
+        //   resolve(res)
+        // } else {
+        //   iView.Notice.error({
+        //     title: res.data || '系统错误',
+        //     duration: 3
+        //   })
+        //   reject(res)
+        // }
+      }).catch(function(error) {
+        reject(error)
+      })
+    })
+  }
+}

@@ -1,63 +1,79 @@
+import { Object } from 'core-js'
+
 const generateId = () => {
   return Number(Math.random().toString().substr(3, length) + Date.now()).toString(36)
 }
 const state = {
+  maxComponentId: 0,
   storeList: [],
+  vw: 480,
+  vh: 350,
+  labelName: '',
+  LeftMargin: 10,
+  RightMargin: 10,
+  TopMargin: 10,
+  isBolder: true,
+  BottomMargin: 10,
   activeComponent: '',
   componentMap: {
     customText: {
-      name: 'customText',
-      type: 'TextUi',
-      classify: 'TextMenu',
+      type: 'TextBox',
+      userControlledProperties: 'TextMenu',
       title: '自定义文本',
-      instance: false,
-      updateId: '',
-      position: {
-        clientX: '',
-        clientY: ''
-      },
-      default: {
+      properties: {
         width: 95,
         height: 28,
-        x: '',
-        y: ''
-      },
-      props: {
-        text: '自定义文本',
+        x_position: '',
+        y_position: '',
+        text: '自定义文本', // 页面显示的字段
         align: 'left',
         fontFamily: 'monospace',
         lineHeight: '1.5',
         fontSize: '16px',
         isBold: false,
-        hasBorder: false
+        hasBorder: false,
+        color: '#000',
+        dataSource: {
+          origin: 'EndUserInput',
+          apiWebData: 'employeeName',
+          formular: '',
+          option: ''
+        }
+      }
+    },
+    customInput: {
+      type: 'LabelBox',
+      userControlledProperties: 'InputMenu',
+      title: '文本框',
+      properties: {
+        width: 147,
+        height: 28,
+        x_position: '',
+        y_position: '',
+        fontSize: '12px',
+        isField: false,
+        fieldLendge: '',
+        text: '文本内容',
+        color: '#000'
       }
     },
     customTable: {
-      name: 'customTable',
-      type: 'XTableUi',
-      classify: 'TableMenu',
+      type: 'Grid',
+      userControlledProperties: 'TableMenu',
       title: '自定义表单',
-      instance: false,
-      updateId: '',
-      position: {
-        clientX: '',
-        clientY: ''
-      },
-      default: {
+      properties: {
         width: 662,
         height: '',
-        x: '',
-        y: ''
-      },
-      props: {
+        x_position: '',
+        y_position: '',
         showSection: true,
         cols: 7,
         showTotal: false,
-        tableData: ["name","standard","total","price","prices","note"],
+        tableData: ['name', 'standard', 'total', 'price', 'prices', 'note'],
         tableDataOption: [{
           name: '货物名称',
           key: 'name'
-        },{
+        }, {
           name: '货物规格',
           key: 'standard'
         }, {
@@ -79,7 +95,7 @@ const state = {
         }, {
           prop: 'standard',
           label: '货物规格',
-          width: 180,
+          width: 180
         }, {
           prop: 'total',
           label: '数量'
@@ -100,42 +116,42 @@ const state = {
           price: '',
           prices: '',
           note: ''
-        },{
+        }, {
           name: '',
           spec: '',
           total: '',
           price: '',
           prices: '',
           note: ''
-        },{
+        }, {
           name: '',
           spec: '',
           total: '',
           price: '',
           prices: '',
           note: ''
-        },{
+        }, {
           name: '',
           spec: '',
           total: '',
           price: '',
           prices: '',
           note: ''
-        },{
+        }, {
           name: '',
           spec: '',
           total: '',
           price: '',
           prices: '',
           note: ''
-        },{
+        }, {
           name: '',
           spec: '',
           total: '',
           price: '',
           prices: '',
           note: ''
-        },{
+        }, {
           name: '',
           spec: '',
           total: '',
@@ -146,54 +162,33 @@ const state = {
       }
     },
     qrCode: {
-      name: 'qrCode',
-      type: 'QrCodeUi',
-      classify: 'QrCodeMenu',
+      type: 'QRCodeBox',
+      userControlledProperties: 'QrCodeMenu',
       title: '二维码',
-      updateId: '',
-      instance: false,
-      position: {
-        clientX: '',
-        clientY: ''
-      },
-      default: {
+      properties: {
         width: 160,
         height: 150,
-        x: '',
-        y: ''
-      },
-      props: {
+        x_position: '',
+        y_position: ''
       }
     },
     xLine: {
-      name: 'xLine',
-      type: 'XLineUi',
-      classify: 'LineMenu',
-      instance: false,
+      type: 'H.Line',
+      userControlledProperties: 'LineMenu',
       title: '横线',
-      updateId: '',
-      position: {
-        clientX: '',
-        clientY: ''
-      },
-      default: {
-        width: '',
-        height: '',
-        x: '',
-        y: ''
-      },
-      props: {
+      properties: {
         width: 100,
-        height: 1
+        height: 1,
+        x_position: '',
+        y_position: ''
       }
     },
     rectangle: {
       name: 'rectangle',
       type: 'RectangleUi',
-      classify: '',
+      userControlledProperties: '',
       title: '边框',
       instance: false,
-      updateId: '',
       position: {
         clientX: '',
         clientY: ''
@@ -209,51 +204,33 @@ const state = {
       }
     },
     barCode: {
-      name: 'barCode',
-      type: 'BarCodeUi',
-      classify: 'BarCodeMenu',
-      instance: false,
+      type: 'BarCode',
+      userControlledProperties: 'BarCodeMenu',
       title: '条形码',
-      updateId: '',
-      position: {
-        clientX:'',
-        clientY: ''
-      },
-      default: {
-        width: 234,
-        height: 92,
-        x: '',
-        y: ''
-      },
-      props: {
+      properties: {
+        width: 90,
+        height: 48,
+        x_position: '',
+        y_position: '',
+        text: '条形码显示的文字',
         format: 'CODE128',
+        textPosition: 'bottom',
         lineWidth: 2,
         bodyHeight: 40,
         fontSize: 14,
-        displayValue: '1',
-        data: '123456789',
+        displayValue: false,
+        data: ' '
       }
     },
     yLine: {
-      name: 'yLine',
-      type: 'YLineUi',
-      classify: 'LineMenu',
+      type: 'V.Line',
+      userControlledProperties: 'LineMenu',
       title: '竖线',
-      updateId: '',
-      instance: false,
-      position: {
-        clientX: '',
-        clientY: ''
-      },
-      default: {
-        width: '',
-        height: '',
-        x: '',
-        y: ''
-      },
-      props: {
+      properties: {
         height: 60,
-        width: 1
+        width: 1,
+        x_position: '',
+        y_position: ''
       }
     }
   },
@@ -267,7 +244,15 @@ const state = {
             id: 'customText',
             icon: 'wenben',
             component: {
-              type: 'TextUi'
+              type: 'TextBox'
+            }
+          },
+          {
+            title: '文本框',
+            id: 'customInput',
+            icon: 'wenben',
+            component: {
+              type: 'LabelBox'
             }
           },
           {
@@ -275,7 +260,7 @@ const state = {
             id: 'xLine',
             icon: 'hengxian',
             component: {
-              type: 'XLineUi'
+              type: 'H.Line'
             }
           },
           {
@@ -283,7 +268,7 @@ const state = {
             id: 'yLine',
             icon: 'shuxian',
             component: {
-              type: 'YLineUi'
+              type: 'V.Line'
             }
           },
           {
@@ -291,7 +276,7 @@ const state = {
             id: 'qrCode',
             icon: 'ico',
             component: {
-              type: 'QrCodeUi'
+              type: 'QRCodeBox'
             }
           },
           {
@@ -299,7 +284,7 @@ const state = {
             id: 'barCode',
             icon: 'icon-life-barcode',
             component: {
-              type: 'BarCodeUi'
+              type: 'BarCode'
             }
           },
           {
@@ -307,25 +292,31 @@ const state = {
             id: 'customTable',
             icon: 'table',
             component: {
-              type: 'XTableUi'
-            }
-          },
-          {
-            title: '边框',
-            id: 'rectangle',
-            icon: 'biankuang',
-            component: {
-              type: 'YLineUi'
+              type: 'Grid'
             }
           }
+          // {
+          //   title: '边框',
+          //   id: 'rectangle',
+          //   icon: 'biankuang',
+          //   component: {
+          //     type: 'YLineUi'
+          //   }
+          // }
         ]
       }
     ]
   }
 }
 const mutations = {
+  SET_MAXCOMPONENTID: (state, payload) => {
+    state.maxComponentId = payload
+  },
   SET_STORELIST: (state, payload) => {
-    state.storeList = payload;
+    state.storeList = payload
+  },
+  SET_LABELNAME: (state, contain) => {
+    state.labelName = contain.name
   },
   ADD_COMPONENT: (state, payload) => {
     state.storeList.push(payload)
@@ -333,60 +324,110 @@ const mutations = {
   SET_ACTIVE: (state, id) => {
     state.activeComponent = state.storeList.find(item => item.id === id) || ''
   },
+  SET_BOARDWIDTH: (state, width) => {
+    state.vw = width
+  },
+  SET_LEFTMARGIN: (state, payload) => {
+    state.LeftMargin = payload
+  },
+  SET_RIGHTMARGIN: (state, payload) => {
+    state.RightMargin = payload
+  },
+  SET_TOPMARGIN: (state, payload) => {
+    state.TopMargin = payload
+  },
+  SET_BOTTOMMARGIN: (state, payload) => {
+    state.BottomMargin = payload
+  },
+  SET_BOARDBOARDER: (state, payload) => {
+    state.isBolder = payload
+  },
+  SET_BOARDHEIGHT: (state, height) => {
+    state.vh = height
+  },
   CLEAR_COMPONENT: (state, payload) => {
-    state.storeList = [];
-    state.activeComponent = '';
+    state.storeList = []
+    state.activeComponent = ''
   },
   DELETE_COMPONENT: (state, id) => {
     state.storeList.map((v, i) => {
       if (v.id == id) {
-        state.storeList.splice(i, 1);
+        state.storeList.splice(i, 1)
       }
     })
   },
   UPDATE_COMPONENT: (state, component) => {
     state.storeList = state.storeList.map((item) => {
-      let newItem = {...item};
+      let newItem = { ...item }
       if (item.id === component.id) {
-        newItem = component;
+        newItem = component
       }
-      return newItem;
+      return newItem
     })
   }
 }
 
 const actions = {
+  setComponentID({ commit }, payload) {
+    commit('SET_MAXCOMPONENTID', payload)
+  },
   addComponent({ commit }, payload) {
-    const id = generateId()
+    const id = state.maxComponentId + 1
+    state.maxComponentId++
     const entity = state.componentMap[payload.componentId]
     if (!entity) {
       throw new Error(`${payload.componentId} 未找到该组件`)
     }
     const component = JSON.parse(JSON.stringify(entity))
-    component.id = id
-    const getComponent = Object.assign(component, payload.props)
+    component.id = id.toString()
+    const newObjProperties = Object.assign({}, component.properties, payload.properties)
+    const getComponent = Object.assign(component, { properties: newObjProperties })
     commit('ADD_COMPONENT', getComponent)
   },
+  setLabelName({ commit }, payload) {
+    commit('SET_LABELNAME', payload)
+  },
+  setBoardWidth({ commit }, width) {
+    commit('SET_BOARDWIDTH', width)
+  },
+  setBoardLeftMargin({ commit }, payload) {
+    commit('SET_LEFTMARGIN', payload)
+  },
+  setBoardRightMargin({ commit }, payload) {
+    commit('SET_RIGHTMARGIN', payload)
+  },
+  setBoardTopMargin({ commit }, payload) {
+    commit('SET_TOPMARGIN', payload)
+  },
+  setBoardBottomMargin({ commit }, payload) {
+    commit('SET_BOTTOMMARGIN', payload)
+  },
+  setBoardBorder({ commit }, payload) {
+    commit('SET_BOARDBOARDER', payload)
+  },
+  setBoardHeight({ commit }, height) {
+    commit('SET_BOARDHEIGHT', height)
+  },
   clearAllComponent({ commit }, payload) {
-    commit('CLEAR_COMPONENT');
+    commit('CLEAR_COMPONENT')
   },
   setComponentsList({ commit, state }, payload) {
-    commit('SET_STORELIST', payload);
+    commit('SET_STORELIST', payload)
   },
   updateComponent({ commit, state }, payload) {
-    const current = state.storeList.find(item => item.id === payload.id);
-    const newCurrent = JSON.parse(JSON.stringify(current));
-    newCurrent.updateId = new Date().getTime().toString();
-    const component = Object.assign(newCurrent, payload.update);
-    commit('UPDATE_COMPONENT', component);
+    const current = state.storeList.find(item => item.id === payload.id)
+    const newCurrent = JSON.parse(JSON.stringify(current))
+    const updateObjProperties = Object.assign({}, newCurrent.properties, payload.update)
+    const component = Object.assign(newCurrent, { properties: updateObjProperties })
+    commit('UPDATE_COMPONENT', component)
   },
   deleteComponent({ commit }, id) {
-    commit('DELETE_COMPONENT', id);
+    commit('DELETE_COMPONENT', id)
     commit('SET_ACTIVE', '')
   },
   setActive({ commit }, id) {
     commit('SET_ACTIVE', id || '')
-  },
+  }
 }
 
 export default {

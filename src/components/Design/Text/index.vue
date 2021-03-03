@@ -1,5 +1,5 @@
 <template>
-  <div :id="elementId" class="text-component">
+  <div class="text-component">
     <span class="detail" :style="getTextStyle">{{ text }}</span>
   </div>
 </template>
@@ -7,6 +7,10 @@
 export default {
   props: {
     elementId: {
+      type: String,
+      default: ''
+    },
+    color: {
       type: String,
       default: ''
     },
@@ -24,25 +28,26 @@ export default {
     },
     fontFamily: {
       type: String,
-      default: '',
+      default: ''
     },
     fontSize: {
       type: String,
-      default: '',
+      default: ''
     },
     lineHeight: {
       type: String,
-      default: '',
-    },
+      default: ''
+    }
   },
   computed: {
     getTextStyle() {
-      const { fontFamily, fontSize, lineHeight, isBold, hasBorder } = this;
+      const { fontFamily, fontSize, lineHeight, isBold, hasBorder, color } = this
       let style = {}
       style = {
         fontFamily,
         fontSize,
         lineHeight,
+        color,
         fontWeight: isBold ? 'bold' : '400',
         border: hasBorder ? '1px solid #000' : '1px solid transparent'
       }
@@ -55,7 +60,6 @@ export default {
   methods: {
     init() {
       this.$emit('complete')
-      console.log(this.text)
     }
   }
 }
@@ -68,6 +72,7 @@ export default {
         font-weight: normal;
         word-break: break-all;
         word-wrap: break-word;
+        white-space: pre;
         border: 1px solid transparent;
     }
 }

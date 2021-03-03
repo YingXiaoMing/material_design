@@ -2,9 +2,9 @@
     <div class="line">
         <el-form label-position="top" label-width="80px">
             <el-form-item label="线条宽度:">
-                <el-input-number v-if="isXLine" v-model="currentComponent.props.height"
+                <el-input-number v-if="isXLine" v-model="currentComponent.properties.height"
                 :min="1" :max="10" label="描述文字"></el-input-number>
-                <el-input-number v-else-if="isYLine" v-model="currentComponent.props.width"
+                <el-input-number v-else-if="isYLine" v-model="currentComponent.properties.width"
                 :min="1" :max="10" label="描述文字"></el-input-number>
             </el-form-item>
         </el-form>
@@ -21,11 +21,11 @@ export default {
         },
         isXLine() {
             const { type = '' } = this.currentComponent;
-            return type === 'XLineUi';
+            return type === 'H.Line';
         },
         isYLine() {
             const { type = '' } = this.currentComponent;
-            return type === 'YLineUi';
+            return type === 'V.Line';
         },
     },
     

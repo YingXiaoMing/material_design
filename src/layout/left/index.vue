@@ -2,33 +2,119 @@
   <div class="component-menu-warp">
     <el-collapse v-model="menu" class="collapse-menu">
       <el-collapse-item v-for="(item, index) in componentList" :key="index" :title="item.title" :name="item.title">
-        <draggable class="component-list" v-bind="dragOptions">
-          <template v-if="item.list && item.list.length > 0">
+        <template v-if="item.list && item.list.length > 0">
+          <draggable class="component-list" v-bind="dragOptions" :component-data="getComponentData">
             <div v-for="(tag, index) in item.list" :key="tag.id" class="item" :data-component-id="tag.id">
               <span class="name">{{ tag.title }}</span>
               <svg-icon :icon-class="tag.icon" />
             </div>
-          </template>
-        </draggable>
+          </draggable>
+        </template>
+      </el-collapse-item>
+      <el-collapse-item name="LabelVersion" title="标签版本">
+        <div class="Label_Version">
+          <el-form :model="model">
+            <el-form-item label="标签版本:">
+              <el-select
+                v-model="model.version"
+                placeholder="请选择标签版本"
+                style="width: 176px"
+                @click.native="getOptionData"
+                @change="handleSelectChange"
+              >
+                <el-option v-for="item in versionOption" :label="item.label" :value="item.value" />
+              </el-select>
+            </el-form-item>
+            <el-form-item>
+              <el-button style="width: 140px" type="info" @click="addLabelVersion">新增标签版本</el-button>
+              <el-button style="width: 140px" type="info">复制标签版本</el-button>
+            </el-form-item>
+            <el-form-item>
+              <el-button style="width: 140px" type="info" @click="setDefaultLabel">设置默认标签</el-button>
+              <el-button style="width: 140px" type="info" @click="addNewField">自定义字段</el-button>
+            </el-form-item>
+            <el-form-item>
+              <el-button style="width: 140px" type="primary" icon="el-icon-check" @click="saveLabelData">保存标签版本</el-button>
+              <el-button style="width: 140px" type="danger" icon="el-icon-delete" @click="deleteLabelData">删除标签版本</el-button>
+            </el-form-item>
+          </el-form>
+        </div>
       </el-collapse-item>
     </el-collapse>
+    <page-dialog
+      :title="dialogInfo.title"
+      :b-list="dialogInfo.bList"
+      :visible.sync="dialogInfo.visible"
+      width="808px"
+      @handleClick="handleClick"
+    >
+      <custom-field />
+    </page-dialog>
+    <page-dialog
+      :title="labelDialogInfo.title"
+      :b-list="labelDialogInfo.bList"
+      :visible.sync="labelDialogInfo.visible"
+      width="428px"
+      @handleClick="newLabelHandleClick"
+    >
+      <el-form :model="form" inline>
+        <el-col :span="24">
+          <el-form-item label="标签版本名称:">
+            <el-input v-model="form.name" />
+          </el-form-item>
+        </el-col>
+      </el-form>
+    </page-dialog>
   </div>
 </template>
-
 <script>
+import PageDialog from '@/components/PageDialog'
 import draggable from 'vuedraggable'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
+import { showLoading, hideLoading } from '@/utils/loading'
+import CustomField from './customField.vue'
+import _ from 'lodash'
 export default {
   components: {
-    draggable
+    draggable,
+    PageDialog,
+    CustomField
   },
   data() {
     return {
-      menu: ['构图元素']
+      menu: ['构图元素', 'LabelVersion'],
+      model: {
+        version: ''
+      },
+      form: {
+        name: ''
+      },
+      labelDialogInfo: {
+        title: '新增标签版本',
+        visible: false,
+        type: 0, //  0代表新增  1代表编辑
+        bList: [
+          { label: '关闭', show: true, event: 'close' },
+          { label: '保存', show: true, event: 'save' }
+        ]
+      },
+      dialogInfo: {
+        title: '自定义字段',
+        visible: false,
+        type: 0, //  0代表新增  1代表编辑
+        bList: [
+          { label: '关闭', show: true, event: 'close' },
+          { label: '保存', show: true, event: 'save' }
+        ]
+      },
+      versionOption: []
     }
   },
+  created() {
+    this.loadData()
+  },
   computed: {
-    ...mapGetters(['componentList']),
+    ...mapGetters(['componentList', 'storeList', 'labelVersion', 'components']),
     dragOptions() {
       return {
         sort: false,
@@ -37,6 +123,168 @@ export default {
           pull: 'clone',
           put: false
         }
+      }
+    },
+    getComponentData() {
+      return {}
+    }
+  },
+  methods: {
+    ...mapActions({
+      getTagList: 'label/getTagList',
+      postTagData: 'label/postTagData',
+      updateTagData: 'label/updateTagData',
+      getTagContainById: 'label/getTagContainById',
+      setLabelVersion: 'label/setLabelVersion',
+      setLabelName: 'components/setLabelName',
+      deleteTagData: 'label/deleteTagData',
+      setComponentsList: 'components/setComponentsList',
+      clearAllComponent: 'components/clearAllComponent',
+      setComponentID: 'components/setComponentID'
+    }),
+    deleteLabelData() {
+      this.$confirm('请确认是否删除该标签版本', '提示', {
+        confirmButtonText: '删除',
+        cancelButtonText: '返回',
+        type: 'error'
+      }).then(() => {
+        const id = this.model.version
+        this.deleteTagData(id).then(res => {
+          this.$message.success('删除成功')
+          this.loadData()
+        })
+      })
+    },
+    getOptionData() {
+      this.getTagList().then(res => {
+        this.versionOption = _.map(res, item => {
+          return {
+            label: item.name,
+            value: item.id
+          }
+        })
+      })
+    },
+    handleSelectChange(val) {
+      this.getContainData(val)
+    },
+    saveLabelData() {
+      const newComponentData = _.forEach(this.storeList, (item, key) => {
+        _.unset(item, 'isInstance')
+      })
+      const jsonData = {
+        Name: this.labelVersion.name,
+        Properties: {
+          PaperWidth: this.labelVersion.width,
+          PaperHeight: this.labelVersion.height,
+          TopMargin: this.labelVersion.TopMargin,
+          BottomMargin: this.labelVersion.BottomMargin,
+          LeftMargin: this.labelVersion.LeftMargin,
+          RightMargin: this.labelVersion.RightMargin,
+          IsShowBorder: this.labelVersion.isShowBorder
+        },
+        ViewableControls: newComponentData,
+        MaxComponentId: this.components.maxComponentId
+      }
+
+      const componentData = JSON.stringify(jsonData)
+      const param = {
+        id: this.model.version,
+        name: this.labelVersion.name,
+        content: componentData
+      }
+      this.updateTagData(param).then(res => {
+        this.$message.success('保存成功')
+      })
+    },
+    loadData() {
+      this.getTagList().then(res => {
+        this.versionOption = _.map(res, item => {
+          return {
+            label: item.name,
+            value: item.id
+          }
+        })
+        const firstValue = this.versionOption[0].value
+        this.model.version = firstValue
+        this.getContainData(firstValue)
+      })
+    },
+    getContainData(id) {
+      showLoading()
+      this.getTagContainById(id).then(res => {
+        console.log(res)
+        hideLoading()
+        const newData = _.assign(this.labelVersion, {
+          name: res.name
+        })
+
+        this.setLabelVersion(newData)
+        const content = res.content
+        if (!_.isEmpty(content)) {
+          const componentData = JSON.parse(content)
+          this.$store.dispatch('label/setBoardWidth', componentData.Properties.PaperWidth)
+          this.$store.dispatch('label/setBoardHeight', componentData.Properties.PaperHeight)
+          this.$store.dispatch('label/setBoardLeftMargin', componentData.Properties.LeftMargin)
+          this.$store.dispatch('label/setBoardRightMargin', componentData.Properties.RightMargin)
+          this.$store.dispatch('label/setBoardTopMargin', componentData.Properties.TopMargin)
+          this.$store.dispatch('label/setBoardBottomMargin', componentData.Properties.BottomMargin)
+          _.map(componentData.ViewableControls, item => {
+            item.isInstance = true
+          })
+          this.setComponentsList(componentData.ViewableControls)
+          if (componentData.MaxComponentId) {
+            this.$store.dispatch('components/setComponentID', componentData.MaxComponentId)
+          } else {
+            this.$store.dispatch('components/setComponentID', 0)
+          }
+        } else {
+          this.clearAllComponent()
+        }
+      })
+    },
+    addNewField() {
+      this.dialogInfo.visible = true
+    },
+    setDefaultLabel() {
+      this.$message.success('设置成功')
+    },
+    addLabelVersion() {
+      this.labelDialogInfo.visible = true
+    },
+    newLabelHandleClick(event, data) {
+      switch (event) {
+        case 'close':
+          this.labelDialogInfo.visible = false
+          break
+        case 'save':
+          if (this.form.name == '') {
+            this.$message.warning('名称不能为空')
+            return
+          }
+          const param = {
+            name: this.form.name
+          }
+          this.postTagData(param).then(res => {
+            this.labelDialogInfo.visible = false
+            this.$message.success('新增标签版本成功')
+          })
+
+          break
+        default:
+          break
+      }
+    },
+    handleClick(event, data) {
+      switch (event) {
+        case 'close':
+          this.dialogInfo.visible = false
+          break
+        case 'save':
+          this.dialogInfo.visible = false
+          break
+        default:
+          break
       }
     }
   }
@@ -54,6 +302,12 @@ export default {
                 color: $skyBlue;
                 border-color: 1px solid $skyBlue;
             }
+        }
+        .Label_Version {
+          padding: 5px;
+          .el-form-item {
+            margin-bottom: 12px;
+          }
         }
         .component-list {
             padding: 15px;

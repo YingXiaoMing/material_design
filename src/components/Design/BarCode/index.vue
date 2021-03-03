@@ -1,74 +1,93 @@
 <template>
-    <img ref="img" class="barcode" :class="elementId" :style="getStyle" alt="barcode" src draggable="false" />
+  <img :id="'barCode-' + elementId" ref="img" class="barcode" :class="elementId" :style="getStyle" alt="barcode" draggable="false">
 </template>
 <script>
-import barcode from 'jsbarcode';
-import { mapGetters } from 'vuex';
+import barcode from 'jsbarcode'
+import { mapGetters } from 'vuex'
 
 export default {
-    props: {
-        elementId: {
-            type: String,
-            default: ''
-        },
-        component: {
-            type: Object,
-            default() {
-                return {};
-            }
-        },
-        bodyHeight: {
-            type: Number,
-            default: 40,
-        },
-        lineWidth: {
-            type: Number,
-            default: 2,
-        },
-        displayValue: {
-            type: String,
-            default: '1'
-        },
-        data: {
-            type: String,
-            default: ''
-        }
+  props: {
+    elementId: {
+      type: String,
+      default: ''
     },
-    data() {
+    component: {
+      type: Object,
+      default() {
         return {}
+      }
     },
-    computed: {
-        ...mapGetters(['activeComponent', 'storeList']),
-        currentComponent() {
-            return this.storeList.find((item) => item.id === this.activeComponent)
-        },
-        getStyle() {
-            return {
-                maxWidth: '100%',
-                verticalAlign: 'middle',
-                userSelect: 'none'
-            }
-        }
+    text: {
+      type: String,
+      default: ''
     },
-    mounted() {
-        this.init();
+    textPosition: {
+      type: String,
+      default: ''
     },
-    methods: {
-        init() {
-            this.complete();
-        },
-        complete() {
-            this.$emit('complete');
-            const { elementId, bodyHeight, lineWidth, displayValue, format, data } = this;
-            barcode(`.${elementId}`, data, {
-                format,
-                width: lineWidth,
-                height: bodyHeight,
-                textMargin: 10,
-                displayValue: displayValue === '1',
-            });
-        }
+    bodyHeight: {
+      type: Number,
+      default: 40
+    },
+    lineWidth: {
+      type: Number,
+      default: 2
+    },
+    displayValue: {
+      type: Boolean,
+      default: false
+    },
+    data: {
+      type: String,
+      default: ''
     }
+  },
+  data() {
+    return {}
+  },
+  created() {
+    this.$bus.on('BarCode', () => {
+      const { elementId, bodyHeight, textPosition, lineWidth, displayValue, format, data, text } = this
+      barcode(`#barCode-${elementId}`, data, {
+        text,
+        displayValue: displayValue,
+        textPosition
+      })
+      console.log('不弄虚作假跟你话')
+    })
+  },
+  computed: {
+    ...mapGetters(['activeComponent', 'storeList']),
+    currentComponent() {
+      return this.storeList.find((item) => item.id === this.activeComponent)
+    },
+    getStyle() {
+      return {
+        maxWidth: '100%',
+        verticalAlign: 'middle',
+        userSelect: 'none'
+      }
+    }
+  },
+  mounted() {
+    this.init()
+  },
+  methods: {
+    init() {
+      this.complete()
+    },
+    complete() {
+      this.$emit('complete')
+      const { elementId, bodyHeight, textPosition, lineWidth, displayValue, format, data, text } = this
+      console.log('条形码的数据展示')
+      console.log(this.data)
+      barcode(`#barCode-${elementId}`, data, {
+        text,
+        displayValue,
+        textPosition
+      })
+    }
+  }
 }
 </script>
 <style lang="scss">

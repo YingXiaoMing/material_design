@@ -46,6 +46,7 @@ export default {
             z-index: 90;
         }
         .view-box {
+            // width: calc(100vw - 360px - 300px);
             width: 100%;
             background-color: #e9eef3;
             color: #333;

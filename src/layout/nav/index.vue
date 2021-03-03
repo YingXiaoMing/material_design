@@ -21,26 +21,44 @@
 <script>
 import { mapGetters } from 'vuex'
 import Cookies from 'js-cookie'
+import _ from 'lodash'
 export default {
   computed: {
-    ...mapGetters(['storeList']),
+    ...mapGetters(['storeList', 'labelVersion', 'components'])
   },
   methods: {
     download() {
-      this.$store.dispatch('components/setActive', '');
+      this.$store.dispatch('components/setActive', '')
       this.$nextTick(() => {
-        this.$pdf('canvas_board');
-      });
+        this.$pdf('canvas_board')
+      })
     },
     clearData() {
       // clearAllComponent
-      this.$store.dispatch('components/clearAllComponent');
+      this.$store.dispatch('components/clearAllComponent')
     },
     saveData() {
-      const res = JSON.stringify(this.storeList);
-      console.log(res);
-      Cookies.set('app_component', res);
-      this.$message.success('保存成功');
+      const newComponentData = _.forEach(this.storeList, (item, key) => {
+        _.unset(item, 'isInstance')
+      })
+      console.log(this.components.maxComponentId)
+      const jsonData = {
+        Name: this.labelVersion.name,
+        Properties: {
+          PaperWidth: this.labelVersion.width,
+          PaperHeight: this.labelVersion.height,
+          TopMargin: this.labelVersion.TopMargin,
+          BottomMargin: this.labelVersion.BottomMargin,
+          LeftMargin: this.labelVersion.LeftMargin,
+          RightMargin: this.labelVersion.RightMargin,
+          IsShowBorder: this.labelVersion.isShowBorder
+        },
+        ViewableControls: newComponentData
+      }
+      const jsonString = JSON.stringify(jsonData)
+      console.log(jsonString)
+      // window.localStorage.setItem('app_components', res);
+      // this.$message.success('保存成功');
     }
   }
 }
@@ -62,7 +80,7 @@ export default {
     .logo-area {
         color: $skyBlue;
         font-weight: 500;
-        font-size: 18px;
+        font-size: 22px;
     }
     .handle-area {
         height: 100%;
