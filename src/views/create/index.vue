@@ -3,8 +3,8 @@
     <header-nav />
     <div class="body-area">
       <left-menu class="left-menu" />
-      <board class="view-box" />
-      <right-menu class="right-menu" />
+      <board class="view-box" ref="board"/>
+      <right-menu class="right-menu" @page-size-change="onPageSizeChange"/>
     </div>
   </div>
 </template>
@@ -16,6 +16,11 @@ export default {
     LeftMenu,
     Board,
     RightMenu
+  },
+  methods: {
+    onPageSizeChange() {
+      this.$refs.board.initDragBasic();
+    }
   }
 }
 </script>

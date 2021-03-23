@@ -46,6 +46,11 @@ export default {
   mounted() {
     this.init()
   },
+  created() {
+    // this.$bus.on('AdjustPage', () => {
+    //   this.onWindowResize();
+    // });
+  },
   computed: {
     ...mapGetters(['storeList', 'activeComponent', 'vw', 'vh']),
     getOptions() {
@@ -68,15 +73,22 @@ export default {
   methods: {
     init() {
       this.initLayoutData()
+      // 监听面板的变化
+      this.addListener();
     },
     addListener() {
-      // this.debounceResizeChange = debounce(300, this.onWindowResize);
+      this.debounceResizeChange = debounce(300, this.onWindowResize);
       // on(window, 'resize', this.debounceResizeChange);
       // on(window, 'keyup', this.onDeleteKeyUp);
     },
     onWindowResize() {
-      // this.initLayoutData();
-
+      this.initLayoutData();
+      const $dragList = this.$refs.distanceComponent;
+      if ($dragList && $dragList.length > 0) {
+        $dragList.forEach((item) => {
+          item.init();
+        })
+      }
     },
     initLayoutData() {
       const $board = this.$refs['drag-board'].$el
@@ -87,7 +99,6 @@ export default {
       this.top = top
     },
     onAdd(el) {
-      console.log('添加到组件模块页面')
       const { clientX, clientY } = el.originalEvent
       const componentId = el.item.getAttribute('data-component-id')
       const properties = {

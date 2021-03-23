@@ -6,9 +6,11 @@ const generateId = () => {
 const state = {
   maxComponentId: 0,
   storeList: [],
-  vw: 480,
-  vh: 350,
-  labelName: '',
+  page: {
+    width: 500,
+    height: 500,
+  },
+  labelName: '测试版本',
   LeftMargin: 10,
   RightMargin: 10,
   TopMargin: 10,
@@ -321,11 +323,14 @@ const mutations = {
   ADD_COMPONENT: (state, payload) => {
     state.storeList.push(payload)
   },
+  SET_PAGE_SIZE: (state, payload) => {
+    console.log(payload);
+    state.page.width = payload.width;
+    state.page.height = payload.height;
+    console.log(state.page.width);
+  },
   SET_ACTIVE: (state, id) => {
     state.activeComponent = state.storeList.find(item => item.id === id) || ''
-  },
-  SET_BOARDWIDTH: (state, width) => {
-    state.vw = width
   },
   SET_LEFTMARGIN: (state, payload) => {
     state.LeftMargin = payload
@@ -341,9 +346,6 @@ const mutations = {
   },
   SET_BOARDBOARDER: (state, payload) => {
     state.isBolder = payload
-  },
-  SET_BOARDHEIGHT: (state, height) => {
-    state.vh = height
   },
   CLEAR_COMPONENT: (state, payload) => {
     state.storeList = []
@@ -366,7 +368,6 @@ const mutations = {
     })
   }
 }
-
 const actions = {
   setComponentID({ commit }, payload) {
     commit('SET_MAXCOMPONENTID', payload)
@@ -383,6 +384,10 @@ const actions = {
     const newObjProperties = Object.assign({}, component.properties, payload.properties)
     const getComponent = Object.assign(component, { properties: newObjProperties })
     commit('ADD_COMPONENT', getComponent)
+  },
+  setPageSize({ commit }, payload) {
+    console.log('show me the gold');
+    commit('SET_PAGE_SIZE', payload);
   },
   setLabelName({ commit }, payload) {
     commit('SET_LABELNAME', payload)

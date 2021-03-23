@@ -53,7 +53,6 @@ export default {
         displayValue: displayValue,
         textPosition
       })
-      console.log('不弄虚作假跟你话')
     })
   },
   computed: {
@@ -79,8 +78,6 @@ export default {
     complete() {
       this.$emit('complete')
       const { elementId, bodyHeight, textPosition, lineWidth, displayValue, format, data, text } = this
-      console.log('条形码的数据展示')
-      console.log(this.data)
       barcode(`#barCode-${elementId}`, data, {
         text,
         displayValue,

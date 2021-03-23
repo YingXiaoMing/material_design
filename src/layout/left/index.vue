@@ -166,7 +166,7 @@ export default {
       })
     },
     handleSelectChange(val) {
-      this.getContainData(val)
+      // this.getContainData(val)
     },
     saveLabelData() {
       const newComponentData = _.forEach(this.storeList, (item, key) => {
@@ -175,18 +175,17 @@ export default {
       const jsonData = {
         Name: this.labelVersion.name,
         Properties: {
-          PaperWidth: this.labelVersion.width,
-          PaperHeight: this.labelVersion.height,
-          TopMargin: this.labelVersion.TopMargin,
-          BottomMargin: this.labelVersion.BottomMargin,
-          LeftMargin: this.labelVersion.LeftMargin,
-          RightMargin: this.labelVersion.RightMargin,
-          IsShowBorder: this.labelVersion.isShowBorder
+          paperWidth: this.labelVersion.width,
+          paperHeight: this.labelVersion.height,
+          topMargin: this.labelVersion.TopMargin,
+          bottomMargin: this.labelVersion.BottomMargin,
+          leftMargin: this.labelVersion.LeftMargin,
+          rightMargin: this.labelVersion.RightMargin,
+          isShowBorder: this.labelVersion.isShowBorder
         },
         ViewableControls: newComponentData,
         MaxComponentId: this.components.maxComponentId
       }
-
       const componentData = JSON.stringify(jsonData)
       const param = {
         id: this.model.version,
@@ -207,28 +206,26 @@ export default {
         })
         const firstValue = this.versionOption[0].value
         this.model.version = firstValue
-        this.getContainData(firstValue)
+        // this.getContainData(firstValue)
       })
     },
     getContainData(id) {
       showLoading()
       this.getTagContainById(id).then(res => {
-        console.log(res)
         hideLoading()
         const newData = _.assign(this.labelVersion, {
           name: res.name
         })
-
         this.setLabelVersion(newData)
         const content = res.content
         if (!_.isEmpty(content)) {
           const componentData = JSON.parse(content)
-          this.$store.dispatch('label/setBoardWidth', componentData.Properties.PaperWidth)
-          this.$store.dispatch('label/setBoardHeight', componentData.Properties.PaperHeight)
-          this.$store.dispatch('label/setBoardLeftMargin', componentData.Properties.LeftMargin)
-          this.$store.dispatch('label/setBoardRightMargin', componentData.Properties.RightMargin)
-          this.$store.dispatch('label/setBoardTopMargin', componentData.Properties.TopMargin)
-          this.$store.dispatch('label/setBoardBottomMargin', componentData.Properties.BottomMargin)
+          this.$store.dispatch('label/setBoardWidth', componentData.Properties.paperWidth)
+          this.$store.dispatch('label/setBoardHeight', componentData.Properties.paperHeight)
+          this.$store.dispatch('label/setBoardLeftMargin', componentData.Properties.leftMargin)
+          this.$store.dispatch('label/setBoardRightMargin', componentData.Properties.rightMargin)
+          this.$store.dispatch('label/setBoardTopMargin', componentData.Properties.topMargin)
+          this.$store.dispatch('label/setBoardBottomMargin', componentData.Properties.bottomMargin)
           _.map(componentData.ViewableControls, item => {
             item.isInstance = true
           })

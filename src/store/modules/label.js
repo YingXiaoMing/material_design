@@ -4,9 +4,9 @@ export default {
   namespaced: true,
   state: {
     labelVersion: {
-      name: '',
+      name: '测试版本',
       width: 480,
-      height: 350,
+      height: 480,
       isShowBorder: true,
       LeftMargin: 10,
       RightMargin: 10,
@@ -16,7 +16,6 @@ export default {
   },
   mutations: {
     SET_LABELVERSION: (state, contain) => {
-      console.log(contain)
       state.labelVersion.name = contain.name
     },
     SET_BOARDWIDTH: (state, width) => {

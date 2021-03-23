@@ -97,7 +97,6 @@ export default {
   created() {
     this.$bus.on('AdjustPage', () => {
       // this.initLayoutScheme();
-      console.log('调整页面的界面')
     })
   },
   mounted() {
@@ -188,6 +187,30 @@ export default {
     updateInputText(text) {
       this.componentObject.properties.text = text
     },
+    setLayoutScheme() {
+      const $drag = this.$refs.drag
+      const isInstance = this.isInstance
+      const element = $drag.firstElementChild
+      const defaultData = this.attribute
+      // const canvas = document.querySelector('.drag-canvas-warp.board-canvas')
+      const canvas = document.querySelector('#canvas_board')
+      const { width, height } = $drag.getBoundingClientRect()
+      const { defaultX, defaultY } = this
+      const { top, left } = element.getBoundingClientRect()
+      this.board = canvas.getBoundingClientRect()
+      this.offsetLeft = left
+      this.offsetTop = top
+      this.defaultHeight = height
+      this.defaultWidth = width
+      this.width = width
+      this.x = defaultData.x_position
+      this.y = defaultData.y_position
+      this.width = defaultData.width
+      this.height = defaultData.height || ''
+      this.$nextTick(() => {
+        this.debounceUpdateComponent()
+      })
+    },
     initLayoutScheme() {
       const $drag = this.$refs.drag
       const isInstance = this.isInstance
@@ -204,9 +227,6 @@ export default {
       this.defaultHeight = height
       this.defaultWidth = width
       this.width = width
-      console.log('检测数据生成')
-      console.log(element.getBoundingClientRect())
-      console.log(width)
       if (isInstance) {
         this.x = defaultData.x_position
         this.y = defaultData.y_position
@@ -229,7 +249,6 @@ export default {
       off(document, 'mouseup', this.handleMouseUp)
     },
     handleMouseDown(e) {
-      console.log('你已经选择拖着组件')
       const $drag = e.path.find((item) => item.className.includes('drag-warp'))
       const { top, left } = $drag.getBoundingClientRect()
       this.downX = e.clientX - left
@@ -251,7 +270,6 @@ export default {
       const clientX = e.clientX
       const clientY = e.clientY
       const $drag = this.$refs.drag
-
       const canvasImg = document.querySelector('#canvas_board')
       const canvasRect = canvasImg.getBoundingClientRect()
       const boardHeight = canvasRect.height
@@ -262,11 +280,6 @@ export default {
       const y = clientY - this.offsetTop - this.downY
       const $element = document.getElementById(aim)
       const { width, height } = $element.getBoundingClientRect()
-      console.log('I CASR SAD')
-      console.log(width)
-      console.log(x)
-      console.log(width + x)
-      console.log(boardWidth)
       if (x <= 0) {
         this.x = 0
       } else if ((width + x) >= boardWidth) {

@@ -11,7 +11,7 @@
         <el-col :span="12">
           <el-form-item label="纸张宽度:">
             <el-input
-              v-model="form.vw"
+              v-model="form.width"
               style="width: 60px"
               onkeyup="value=value.replace(/[^\d]/g,'')"
               @input="(val) => handleBoardChange(val, 'width')"
@@ -22,7 +22,7 @@
         <el-col :span="12">
           <el-form-item label="纸张高度:">
             <el-input
-              v-model="form.vh"
+              v-model="form.height"
               size="small"
               style="width: 60px"
               onkeyup="value=value.replace(/[^\d]/g,'')"
@@ -88,6 +88,9 @@
             </el-radio-group>
           </el-form-item>
         </el-col>
+        <el-col :span="24">
+          <el-button size="small" @click="sumbitData">提交</el-button>
+        </el-col>
       </el-form>
     </div>
     <div v-if="activeComponent" class="title-area">{{ activeComponent.title }}</div>
@@ -107,8 +110,8 @@ export default {
     'componentData': {
       handler(val, oval) {
         this.form.versionName = val.name
-        this.form.vw = val.width
-        this.form.vh = val.height
+        // this.form.vw = val.width
+        // this.form.vh = val.height
         this.form.isBolder = val.isShowBorder
         this.form.isProductNum = val.isBatchNo
         this.form.isPackage = val.isPackageNumber
@@ -120,8 +123,9 @@ export default {
     }
   },
   created() {
-    this.form.vw = this.vw
-    this.form.vh = this.vh
+    this.form.width = this.$store.state.components.page.width;
+    this.form.height = this.$store.state.components.page.height;
+    this.form.versionName = this.labelVersion.name
     this.form.marginLeft = this.labelVersion.TopMargin
     this.form.marginRight = this.labelVersion.TopMargin
     this.form.marginTop = this.labelVersion.TopMargin
@@ -132,8 +136,8 @@ export default {
     return {
       form: {
         versionName: '',
-        vw: '',
-        vh: '',
+        width: '',
+        height: '',
         marginLeft: 10,
         marginRight: 10,
         marginTop: 10,
@@ -159,31 +163,41 @@ export default {
       const newData = _.assign(this.labelVersion, { name: val })
       this.setLabelVersion(newData)
     },
+    sumbitData() {
+      const data = {
+        width: this.form.width,
+        height: this.form.height
+      };
+      this.$store.dispatch('components/setPageSize', data);
+      this.$emit('page-size-change');
+
+    },
     handleBoardChange(val, name) {
-      const newVal = parseInt(val)
-      switch (name) {
-        case 'width':
-          this.$store.dispatch('label/setBoardWidth', newVal)
-          break
-        case 'height':
-          this.$store.dispatch('label/setBoardHeight', newVal)
-          break
-        case 'left':
-          this.$store.dispatch('label/setBoardLeftMargin', newVal)
-          break
-        case 'right':
-          this.$store.dispatch('label/setBoardRightMargin', newVal)
-          break
-        case 'top':
-          this.$store.dispatch('label/setBoardTopMargin', newVal)
-          break
-        case 'right':
-          this.$store.dispatch('label/setBoardBottomMargin', newVal)
-          break
-        default:
-          break
-      }
-      this.$bus.emit('AdjustPage')
+      const newVal = parseInt(val);
+
+      // switch (name) {
+      //   case 'width':
+      //     this.$store.dispatch('label/setBoardWidth', newVal)
+      //     break
+      //   case 'height':
+      //     this.$store.dispatch('label/setBoardHeight', newVal)
+      //     break
+      //   case 'left':
+      //     this.$store.dispatch('label/setBoardLeftMargin', newVal)
+      //     break
+      //   case 'right':
+      //     this.$store.dispatch('label/setBoardRightMargin', newVal)
+      //     break
+      //   case 'top':
+      //     this.$store.dispatch('label/setBoardTopMargin', newVal)
+      //     break
+      //   case 'right':
+      //     this.$store.dispatch('label/setBoardBottomMargin', newVal)
+      //     break
+      //   default:
+      //     break
+      // }
+      // this.$bus.emit('AdjustPage')
     }
   }
 }
@@ -203,7 +217,7 @@ export default {
  }
  .version_design {
    padding: 8px;
-   height: 188px;
+   height: 228px;
    .el-form-item {
      margin-bottom: 2px;
    }

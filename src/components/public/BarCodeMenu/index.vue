@@ -46,8 +46,6 @@ export default {
     watch: {
         info: {
             handler(newVal) {
-                console.log('想要成为rapper');
-                console.log(newVal);
                 this.$bus.emit('BarCode');
             },
         }

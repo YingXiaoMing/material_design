@@ -138,7 +138,6 @@ export default {
           }
           if (this.form.type === 'custom') {
             const listData = this.form.customFiled.split(',')
-            console.log(listData)
             const newData = _.map(listData, (item, i) => {
               return {
                 label: item,

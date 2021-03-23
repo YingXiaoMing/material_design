@@ -1,8 +1,10 @@
 <template>
   <div class="board-warp">
-    <div class="canvas-wrapper" :style="styleObject">
-      <div class="board_container" :style="getBoardStyleObject">
-        <drag-canvas class="board-canvas" />
+    <div class="view-wrapper" ref="view" :style="viewWrapStyle">
+      <div class="canvas-wrapper" :style="styleObject">
+        <div class="board_container" :style="getBoardStyleObject">
+          <drag-canvas class="board-canvas" ref="canvas"/>
+        </div>
       </div>
     </div>
   </div>
@@ -17,11 +19,19 @@ export default {
   },
   computed: {
     ...mapGetters(['activeComponent', 'vw', 'vh', 'labelVersion']),
-    styleObject: function() {
-      console.log(this.vw)
+    viewWrapStyle() {
+      const { width, height } = this.view;
       return {
-        width: this.vw + 'px',
-        height: this.vh + 'px',
+        width: `${width}px`,
+        height: `${height}px`
+      }
+    },
+    styleObject: function() {
+      return {
+        width: `${this.$store.state.components.page.width}px`,
+        height: `${this.$store.state.components.page.height}px`,
+        // width: this.vw + 'px',
+        // height: this.vh + 'px',
         paddingTop: this.labelVersion.TopMargin + 'px',
         paddingBottom: this.labelVersion.BottomMargin + 'px',
         paddingLeft: this.labelVersion.LeftMargin + 'px',
@@ -35,7 +45,27 @@ export default {
     }
   },
   data() {
-    return {}
+    return {
+      view: {
+        width: '',
+        height: ''
+      }
+    }
+  },
+  mounted() {
+    this.init();
+  },
+  methods: {
+    init() {
+      this.setViewStyle();
+    },
+    setViewStyle() {
+      this.view.width = window.screen.width;
+      this.view.height = window.screen.height;
+    },
+    initDragBasic() {
+      this.$refs.canvas.onWindowResize();
+    }
   }
 }
 </script>
@@ -71,7 +101,8 @@ export default {
     .board-canvas {
         width: 100%;
         height: 100%;
-        position: absolute;
+        position: relative;
+        z-index: 99999;
     }
 }
 </style>
