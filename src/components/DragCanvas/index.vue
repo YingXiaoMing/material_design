@@ -46,13 +46,8 @@ export default {
   mounted() {
     this.init()
   },
-  created() {
-    // this.$bus.on('AdjustPage', () => {
-    //   this.onWindowResize();
-    // });
-  },
   computed: {
-    ...mapGetters(['storeList', 'activeComponent', 'vw', 'vh']),
+    ...mapGetters(['storeList', 'activeComponent']),
     getOptions() {
       return {
         group: {
@@ -66,10 +61,6 @@ export default {
       }
     }
   },
-  watch: {
-    vw(newValue, oldValue) {
-    }
-  },
   methods: {
     init() {
       this.initLayoutData()
@@ -78,8 +69,6 @@ export default {
     },
     addListener() {
       this.debounceResizeChange = debounce(300, this.onWindowResize);
-      // on(window, 'resize', this.debounceResizeChange);
-      // on(window, 'keyup', this.onDeleteKeyUp);
     },
     onWindowResize() {
       this.initLayoutData();
@@ -113,16 +102,20 @@ export default {
       }
     },
     onMoveEnd(data) {
-      const { height, width, x, y, id } = data
+      const { height, width, x, y, id, instance } = data;
+      console.log('成都人都是成都');
       const update = {
         id,
         update: {
           height,
           width,
           x_position: x,
-          y_position: y
-        }
+          y_position: y,
+        },
+        instance,
+        
       }
+      console.log(update);
       if (update.id) this.$store.dispatch('components/updateComponent', update)
     }
   }

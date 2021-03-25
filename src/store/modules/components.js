@@ -1,21 +1,19 @@
-import { Object } from 'core-js'
-
-const generateId = () => {
-  return Number(Math.random().toString().substr(3, length) + Date.now()).toString(36)
-}
+import Vue from 'vue';
+import _ from 'lodash'
+import barcode from 'jsbarcode';
 const state = {
   maxComponentId: 0,
   storeList: [],
   page: {
     width: 500,
     height: 500,
+    name: '测试版本',
+    isShowBorder: true,
+    leftMargin: 10,
+    rightMargin: 10,
+    topMargin: 10,
+    bottomMargin: 10
   },
-  labelName: '测试版本',
-  LeftMargin: 10,
-  RightMargin: 10,
-  TopMargin: 10,
-  isBolder: true,
-  BottomMargin: 10,
   activeComponent: '',
   componentMap: {
     customText: {
@@ -52,7 +50,7 @@ const state = {
         height: 28,
         x_position: '',
         y_position: '',
-        fontSize: '12px',
+        fontSize: '16px',
         isField: false,
         fieldLendge: '',
         text: '文本内容',
@@ -317,35 +315,43 @@ const mutations = {
   SET_STORELIST: (state, payload) => {
     state.storeList = payload
   },
-  SET_LABELNAME: (state, contain) => {
-    state.labelName = contain.name
+  SET_LABELVERSION: (state, contain) => {
+    state.page.label = contain.name
   },
   ADD_COMPONENT: (state, payload) => {
     state.storeList.push(payload)
   },
   SET_PAGE_SIZE: (state, payload) => {
-    console.log(payload);
     state.page.width = payload.width;
     state.page.height = payload.height;
-    console.log(state.page.width);
+    state.page.topMargin = payload.topMargin;
+    state.page.bottomMargin = payload.bottomMargin;
+    state.page.leftMargin = payload.leftMargin;
+    state.page.rightMargin = payload.rightMargin;
   },
   SET_ACTIVE: (state, id) => {
     state.activeComponent = state.storeList.find(item => item.id === id) || ''
   },
   SET_LEFTMARGIN: (state, payload) => {
-    state.LeftMargin = payload
+    state.page.leftMargin = payload
   },
   SET_RIGHTMARGIN: (state, payload) => {
-    state.RightMargin = payload
+    state.page.rightMargin = payload
   },
   SET_TOPMARGIN: (state, payload) => {
-    state.TopMargin = payload
+    state.page.topMargin = payload
   },
   SET_BOTTOMMARGIN: (state, payload) => {
-    state.BottomMargin = payload
+    state.page.bottomMargin = payload
   },
   SET_BOARDBOARDER: (state, payload) => {
-    state.isBolder = payload
+    state.page.isShowBorder = payload
+  },
+  SET_BOARDHEIGHT: (state, payload) => {
+    state.page.height = payload;
+  },
+  SET_BOARDWIDTH: (state, payload) => {
+    state.page.width = payload;
   },
   CLEAR_COMPONENT: (state, payload) => {
     state.storeList = []
@@ -386,11 +392,10 @@ const actions = {
     commit('ADD_COMPONENT', getComponent)
   },
   setPageSize({ commit }, payload) {
-    console.log('show me the gold');
     commit('SET_PAGE_SIZE', payload);
   },
-  setLabelName({ commit }, payload) {
-    commit('SET_LABELNAME', payload)
+  setLabelVersion({ commit }, payload) {
+    commit('SET_LABELVERSION', payload)
   },
   setBoardWidth({ commit }, width) {
     commit('SET_BOARDWIDTH', width)
@@ -420,11 +425,25 @@ const actions = {
     commit('SET_STORELIST', payload)
   },
   updateComponent({ commit, state }, payload) {
-    const current = state.storeList.find(item => item.id === payload.id)
-    const newCurrent = JSON.parse(JSON.stringify(current))
-    const updateObjProperties = Object.assign({}, newCurrent.properties, payload.update)
-    const component = Object.assign(newCurrent, { properties: updateObjProperties })
-    commit('UPDATE_COMPONENT', component)
+    const current = state.storeList.find(item => item.id === payload.id);
+    const newCurrent = _.cloneDeep(current);
+    _.extend(newCurrent.properties, payload.update);
+    newCurrent.isInstance = payload.instance;
+    commit('UPDATE_COMPONENT', newCurrent)
+  },
+  updateBarcode({ commit, state }) {
+    const current = state.storeList.find(item => item.id === state.activeComponent.id || '');
+    const { text, format, textPosition, lineWidth, bodyHeight,
+      fontSize, displayValue, data } = current.properties;
+    try {
+      barcode(`#barCode-${current.id}`, data, {
+        text,
+        displayValue,
+        textPosition
+      });
+    } catch(e) {
+      console.log(e);
+    }
   },
   deleteComponent({ commit }, id) {
     commit('DELETE_COMPONENT', id)

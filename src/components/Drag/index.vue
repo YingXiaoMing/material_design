@@ -94,14 +94,9 @@ export default {
   destroyed() {
     this.clearAllListener()
   },
-  created() {
-    this.$bus.on('AdjustPage', () => {
-      // this.initLayoutScheme();
-    })
-  },
   mounted() {
     this.debounceUpdateComponent = debounce(200, this.moveEnd)
-    window.addEventListener('keydown', this.onKeyDown, true)
+    // window.addEventListener('keydown', this.onKeyDown, true)
   },
   computed: {
     ...mapGetters(['activeComponent']),
@@ -182,7 +177,9 @@ export default {
       return false
     },
     init() {
-      this.initLayoutScheme()
+      setTimeout(() => {
+        this.initLayoutScheme();
+      });
     },
     updateInputText(text) {
       this.componentObject.properties.text = text
@@ -192,8 +189,8 @@ export default {
       const isInstance = this.isInstance
       const element = $drag.firstElementChild
       const defaultData = this.attribute
-      // const canvas = document.querySelector('.drag-canvas-warp.board-canvas')
-      const canvas = document.querySelector('#canvas_board')
+      const canvas = document.querySelector('.drag-canvas-warp.board-canvas')
+      // const canvas = document.querySelector('#canvas_board')
       const { width, height } = $drag.getBoundingClientRect()
       const { defaultX, defaultY } = this
       const { top, left } = element.getBoundingClientRect()
@@ -222,11 +219,12 @@ export default {
       const { defaultX, defaultY } = this
       const { top, left } = element.getBoundingClientRect()
       this.board = canvas.getBoundingClientRect()
-      this.offsetLeft = left
-      this.offsetTop = top
-      this.defaultHeight = height
-      this.defaultWidth = width
-      this.width = width
+      this.offsetLeft = this.board.left;
+      this.offsetTop = this.board.top;
+      // this.defaultHeight = height
+      // this.defaultWidth = width
+      this.width = width;
+      this.height = height;
       if (isInstance) {
         this.x = defaultData.x_position
         this.y = defaultData.y_position
@@ -235,9 +233,11 @@ export default {
       } else {
         this.x = defaultX - left
         this.y = defaultY - top
-        this.width = defaultData.width
-        this.height = defaultData.height
       }
+      console.log('瓜得要命');
+      console.log(isInstance);
+      console.log(defaultX);
+      console.log(left);
       this.$nextTick(() => {
         this.debounceUpdateComponent()
       })
@@ -307,6 +307,7 @@ export default {
           id: this.aimId,
           x,
           y,
+          instance: true,
           width: this.width || 0,
           height: this.height || 0
         }

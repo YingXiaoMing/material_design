@@ -2,17 +2,17 @@
     <div class="text-menu-warp">
         <el-form label-position="top" label-width="88px" size="mini">
             <el-form-item label="显示文本:">
-                <el-radio-group v-model="currentComponent.properties.displayValue">
+                <el-radio-group v-model="currentComponent.properties.displayValue" @change="debounceUpdate">
                   <el-radio :label="true">显示</el-radio>
                   <el-radio :label="false">隐藏</el-radio>
                 </el-radio-group>
             </el-form-item>
             <el-form-item label="文本内容:">
                 <el-input type="textarea" :rows="4" resize="none" size="small"
-                v-model="currentComponent.properties.text"></el-input>
+                v-model="currentComponent.properties.text" @input="debounceUpdate"></el-input>
             </el-form-item>
             <el-form-item label="文本方向:">
-                <el-select v-model="currentComponent.properties.textPosition">
+                <el-select v-model="currentComponent.properties.textPosition" @change="debounceUpdate">
                   <el-option value="top" label="顶部"></el-option>
                   <el-option value="bottom" label="底部"></el-option>
                 </el-select>
@@ -21,6 +21,7 @@
     </div>
 </template>
 <script>
+import { debounce } from 'throttle-debounce';
 import { mapGetters } from 'vuex';
 export default {
     computed: {
@@ -38,23 +39,22 @@ export default {
         displayValue() {
             return this.currentComponent.properties.displayValue
         },
-        info() {
-            const { title, textPosition, displayValue } = this
-            return { title, textPosition, displayValue };
-        }
     },
-    watch: {
-        info: {
-            handler(newVal) {
-                this.$bus.emit('BarCode');
-            },
-        }
-    },
+    
     data() {
         return {
+            debounceUpdate: Function,
 
         }
     },
+    mounted() {
+        this.debounceUpdate = debounce(300, this.handleUpdateBarcode);
+    },
+    methods: {
+        handleUpdateBarcode() {
+            this.$store.dispatch('components/updateBarcode');
+        }
+    }
 }
 </script>
 

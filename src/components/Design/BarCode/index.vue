@@ -45,16 +45,6 @@ export default {
   data() {
     return {}
   },
-  created() {
-    this.$bus.on('BarCode', () => {
-      const { elementId, bodyHeight, textPosition, lineWidth, displayValue, format, data, text } = this
-      barcode(`#barCode-${elementId}`, data, {
-        text,
-        displayValue: displayValue,
-        textPosition
-      })
-    })
-  },
   computed: {
     ...mapGetters(['activeComponent', 'storeList']),
     currentComponent() {

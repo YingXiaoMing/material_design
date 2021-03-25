@@ -18,7 +18,7 @@ export default {
     DragCanvas
   },
   computed: {
-    ...mapGetters(['activeComponent', 'vw', 'vh', 'labelVersion']),
+    ...mapGetters(['activeComponent', 'pageAttribute']),
     viewWrapStyle() {
       const { width, height } = this.view;
       return {
@@ -28,19 +28,17 @@ export default {
     },
     styleObject: function() {
       return {
-        width: `${this.$store.state.components.page.width}px`,
-        height: `${this.$store.state.components.page.height}px`,
-        // width: this.vw + 'px',
-        // height: this.vh + 'px',
-        paddingTop: this.labelVersion.TopMargin + 'px',
-        paddingBottom: this.labelVersion.BottomMargin + 'px',
-        paddingLeft: this.labelVersion.LeftMargin + 'px',
-        paddingRight: this.labelVersion.RightMargin + 'px'
+        width: `${this.pageAttribute.width}px`,
+        height: `${this.pageAttribute.height}px`,
+        paddingTop: this.pageAttribute.topMargin + 'px',
+        paddingBottom: this.pageAttribute.bottomMargin + 'px',
+        paddingLeft: this.pageAttribute.leftMargin + 'px',
+        paddingRight: this.pageAttribute.rightMargin + 'px'
       }
     },
     getBoardStyleObject: function() {
       return {
-        border: this.labelVersion.isShowBorder ? '1px solid #000' : 'transparent'
+        border: this.pageAttribute.isShowBorder ? '1px solid #000' : 'transparent'
       }
     }
   },

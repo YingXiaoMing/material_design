@@ -27,7 +27,7 @@ import Cookies from 'js-cookie'
 import _ from 'lodash'
 export default {
   computed: {
-    ...mapGetters(['storeList', 'labelVersion', 'components'])
+    ...mapGetters(['storeList', 'pageAttribute', 'components'])
   },
   methods: {
     ...mapActions({
@@ -58,15 +58,15 @@ export default {
         _.unset(item, 'isInstance')
       })
       const jsonData = {
-        Name: this.labelVersion.name,
+        Name: this.pageAttribute.name,
         Properties: {
-          paperWidth: this.labelVersion.width,
-          paperHeight: this.labelVersion.height,
-          topMargin: this.labelVersion.TopMargin,
-          bottomMargin: this.labelVersion.BottomMargin,
-          leftMargin: this.labelVersion.LeftMargin,
-          rightMargin: this.labelVersion.RightMargin,
-          isShowBorder: this.labelVersion.isShowBorder
+          paperWidth: this.pageAttribute.width,
+          paperHeight: this.pageAttribute.height,
+          topMargin: this.pageAttribute.topMargin,
+          bottomMargin: this.pageAttribute.bottomMargin,
+          leftMargin: this.pageAttribute.leftMargin,
+          rightMargin: this.pageAttribute.rightMargin,
+          isShowBorder: this.pageAttribute.isShowBorder
         },
         ViewableControls: newComponentData
       }

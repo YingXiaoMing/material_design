@@ -16,9 +16,7 @@ const getters = {
   componentList: state => state.components.components.componentList,
   storeList: state => state.components.storeList,
   activeComponent: state => state.components.activeComponent,
-  vw: state => state.label.labelVersion.width,
-  vh: state => state.label.labelVersion.height,
   components: state => state.components,
-  labelVersion: state => state.label.labelVersion
+  pageAttribute: state => state.components.page,
 }
 export default getters
