@@ -96,7 +96,6 @@ export default {
   },
   mounted() {
     this.debounceUpdateComponent = debounce(200, this.moveEnd)
-    // window.addEventListener('keydown', this.onKeyDown, true)
   },
   computed: {
     ...mapGetters(['activeComponent']),
@@ -139,23 +138,63 @@ export default {
     }
   },
   methods: {
-    onKeyDown(event) {
-      switch (event.keyCode) {
+    onKeyDown(e) {
+      if (this.activeComponent.id !== this.aimId) {
+        return;
+      }
+      const aim = this.aimId
+      const clientX = e.clientX
+      const clientY = e.clientY
+      const $drag = this.$refs.drag
+      const canvasImg = document.querySelector('#canvas_board')
+      const canvasRect = canvasImg.getBoundingClientRect()
+      const boardHeight = canvasRect.height
+      const boardWidth = canvasRect.width
+      const x = clientX - this.offsetLeft - this.downX
+      const y = clientY - this.offsetTop - this.downY
+      const $element = document.getElementById(aim)
+      const { width, height } = $element.getBoundingClientRect()
+      switch (e.keyCode) {
         case 37:
-          console.log('左箭头')
+          if (x <= 0) {
+            this.x = 0;
+          } else if ((width + x) >= boardWidth) {
+            this.x = boardWidth - width;
+          } else { 
+            this.x --;
+          }
           break
         case 38:
-          console.log('上箭头')
+          if (y <= 0) {
+            this.y = 0
+          } else if ((height + y) >= boardHeight) {
+            this.y = boardHeight - height
+          } else {
+            this.y --;
+          }
           break
         case 39:
-          console.log('右箭头')
+          if (x <= 0) {
+            this.x = 0;
+          } else if ((width + x) >= boardWidth) {
+            this.x = boardWidth - width;
+          } else {
+            this.x ++;
+          }
           break
         case 40:
-          console.log('下箭头')
+          if (y <= 0) {
+            this.y = 0
+          } else if ((height + y) >= boardHeight) {
+            this.y = boardHeight - height
+          } else {
+            this.y ++;
+          }
           break
         default:
           break
       }
+      this.debounceUpdateComponent();
     },
     onContextmenu(event) {
       this.$contextmenu({
@@ -234,10 +273,6 @@ export default {
         this.x = defaultX - left
         this.y = defaultY - top
       }
-      console.log('瓜得要命');
-      console.log(isInstance);
-      console.log(defaultX);
-      console.log(left);
       this.$nextTick(() => {
         this.debounceUpdateComponent()
       })
@@ -247,6 +282,7 @@ export default {
       off(document, 'mouseup', this.handleResizeUp)
       off(document, 'mousemove', this.handleMouseMove)
       off(document, 'mouseup', this.handleMouseUp)
+      off(document, 'keydown', this.onKeyDown)
     },
     handleMouseDown(e) {
       const $drag = e.path.find((item) => item.className.includes('drag-warp'))
@@ -255,6 +291,7 @@ export default {
       this.downY = e.clientY - top
 
       on(document, 'mousemove', this.handleMouseMove)
+      on(document, 'keydown', this.onKeyDown)
       on(document, 'mouseup', this.handleMouseUp)
       this.handleSetCurrent()
     },
@@ -274,8 +311,6 @@ export default {
       const canvasRect = canvasImg.getBoundingClientRect()
       const boardHeight = canvasRect.height
       const boardWidth = canvasRect.width
-      // const boardHeight = this.board.height
-      // const boardWidth = this.board.width
       const x = clientX - this.offsetLeft - this.downX
       const y = clientY - this.offsetTop - this.downY
       const $element = document.getElementById(aim)

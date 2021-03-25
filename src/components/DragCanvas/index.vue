@@ -103,7 +103,6 @@ export default {
     },
     onMoveEnd(data) {
       const { height, width, x, y, id, instance } = data;
-      console.log('成都人都是成都');
       const update = {
         id,
         update: {
@@ -113,9 +112,7 @@ export default {
           y_position: y,
         },
         instance,
-        
       }
-      console.log(update);
       if (update.id) this.$store.dispatch('components/updateComponent', update)
     }
   }

@@ -1,6 +1,7 @@
 <template>
   <div class="board-warp">
-    <div class="view-wrapper" ref="view" :style="viewWrapStyle">
+    <div class="view-wrapper" ref="view">
+    <!-- <div class="view-wrapper" ref="view" :style="viewWrapStyle"> -->
       <div class="canvas-wrapper" :style="styleObject">
         <div class="board_container" :style="getBoardStyleObject">
           <drag-canvas class="board-canvas" ref="canvas"/>
