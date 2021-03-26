@@ -75,6 +75,7 @@ export default {
       const $dragList = this.$refs.distanceComponent;
       if ($dragList && $dragList.length > 0) {
         $dragList.forEach((item) => {
+          // 重新渲染数据
           item.init();
         })
       }

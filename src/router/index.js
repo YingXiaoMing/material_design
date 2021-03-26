@@ -31,7 +31,7 @@ Vue.use(Router)
 export const constantRoutes = [
   {
     path: '/',
-    redirect: 'Create'
+    redirect: 'List'
   },
   {
     path: '/create',

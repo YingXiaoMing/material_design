@@ -15,7 +15,7 @@ router.beforeEach(async(to, from, next) => {
   // start progress bar
   // NProgress.start()
   const componentsData = window.localStorage.getItem('app_components')
-
+  
   // const componentsData = Cookies.get('app_component');
   // if (componentsData != undefined && componentsData != 'undefined') {
   //   const res = JSON.parse(componentsData);

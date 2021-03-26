@@ -229,7 +229,6 @@ export default {
       const element = $drag.firstElementChild
       const defaultData = this.attribute
       const canvas = document.querySelector('.drag-canvas-warp.board-canvas')
-      // const canvas = document.querySelector('#canvas_board')
       const { width, height } = $drag.getBoundingClientRect()
       const { defaultX, defaultY } = this
       const { top, left } = element.getBoundingClientRect()
@@ -252,7 +251,6 @@ export default {
       const isInstance = this.isInstance
       const element = $drag.firstElementChild
       const defaultData = this.attribute
-      // const canvas = document.querySelector('.drag-canvas-warp.board-canvas')
       const canvas = document.querySelector('#canvas_board')
       const { width, height } = $drag.getBoundingClientRect()
       const { defaultX, defaultY } = this
@@ -260,8 +258,6 @@ export default {
       this.board = canvas.getBoundingClientRect()
       this.offsetLeft = this.board.left;
       this.offsetTop = this.board.top;
-      // this.defaultHeight = height
-      // this.defaultWidth = width
       this.width = width;
       this.height = height;
       if (isInstance) {

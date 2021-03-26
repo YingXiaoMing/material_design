@@ -205,7 +205,6 @@ export default {
       document.title = `${title} - ${this.postForm.id}`
     },
     submitForm() {
-      console.log(this.postForm)
       this.$refs.postForm.validate(valid => {
         if (valid) {
           this.loading = true

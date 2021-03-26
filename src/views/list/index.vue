@@ -1,45 +1,35 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <!-- <el-button icon="el-icon-plus">创建模板</el-button> -->
-      <el-table :data="tableData" border class="mo_table">
-        <el-table-column label="模板名称" prop="name" />
-        <el-table-column label="操作" width="220px">
-          <template slot-scope="props">
-            <el-button icon="el-icon-search" @click="searchData">查看</el-button>
-            <el-button icon="el-icon-edit" @click="editData">编辑</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+      <el-input v-model="searchKey" placeholder="输入名字查询模板" style="width: 220px"></el-input>
+      <el-button type="primary" style="marginLeft: 10px">查询</el-button>
     </div>
-    <page-dialog
-      :title="dialogInfo.title"
-      :b-list="dialogInfo.bList"
-      :visible.sync="dialogInfo.visible"
-      width="808px"
-      @handleClick="handleClick"
-    >
-      <el-row :gutter="24">
-        <el-col :span="24">
-          <el-button icon="el-icon-printer" class="printBtn" @click="printData">打印</el-button>
+    <div class="filter-container">
+      <el-col :span="24">
+        <el-col :span="6">
+           <el-card class="box-card">
+            <div class="clearfix" slot="header">
+              <span>测试标签</span>
+              <div class="right">
+                <i class="el-icon-edit label_icon" @click="toEdit"></i>
+                <i class="el-icon-printer label_icon"></i>
+              </div>
+            </div>
+            <div class="img-div">
+              <img src="@/assets/test.png"/>
+            </div>
+            <div class="text-div">
+              <p class="lead">测试标签</p>
+              <p><span>大小:</span> 500 厘米 * 500 厘米</p>
+            </div>
+          </el-card>
         </el-col>
-        <el-col :span="24">
-          <div id="star_moban" ref="moban_board" class="moban_board">
-            <template v-for="item in storeList">
-              <drag
-                :key="item.id"
-                :default-x="item.default.x"
-                :default-y="item.default.y"
-                :aim-id="item.id"
-                :component-object="item"
-                :is-instance="item.instance"
-                :default="item.default"
-              />
-            </template>
-          </div>
-        </el-col>
-      </el-row>
-    </page-dialog>
+      </el-col>
+      <el-col :span="24" class="pager">
+        <el-pagination :page-size="20" :page-count="10" :total="300" layout="prev, pager, next"></el-pagination>
+      </el-col>
+    </div>
+    
   </div>
 </template>
 <script>
@@ -49,7 +39,6 @@ import Drag from '@/components/DragShow'
 
 export default {
   components: {
-    PageDialog,
     Drag
   },
   computed: {
@@ -62,27 +51,13 @@ export default {
       right: '',
       top: '',
       bottom: '',
-      tableData: [{
-        name: '通用模板'
-      }],
-      dialogInfo: {
-        title: '查看模板',
-        visible: false,
-        type: 0, //  0代表新增  1代表编辑
-        bList: [
-          { label: '关闭', show: true, event: 'close' },
-          { label: '保存', show: true, event: 'save' }
-        ]
-      }
+      searchKey: '',
     }
   },
   created() {
     console.log(this.storeList)
   },
   methods: {
-    initLayoutData() {
-
-    },
     handleClick(event, data) {
       switch (event) {
         case 'close':
@@ -104,6 +79,14 @@ export default {
         name: 'Create'
       })
       window.open(routeData.href, '_blank')
+    },
+    toEdit() {
+      this.$router.push({
+        name: 'Create',
+        query: {
+          id: 1
+        }
+      });
     },
     printData() {
       this.$pdf('star_moban')
@@ -137,5 +120,41 @@ export default {
     margin-bottom: 10px;
     float: right;
 }
-
+.filter-container {
+  .right {
+    float: right;
+  }
+  .pager {
+    margin-top: 30px;
+  }
+  .label_icon {
+    font-size: 20px;
+    margin-right: 6px;
+    cursor: pointer;
+  }
+  .img-div {
+    float: left;
+    width: 206px;
+    height: 266px;
+    border: 1px solid #ccc;
+    text-align: center;
+    margin: 5px;
+    background-color: #ddd;
+    img {
+      max-height: 200px;
+      max-width: 200px;
+      background-color: #fff;
+      margin: 2px;
+    }
+  }
+  .text-div {
+    margin: 5px;;
+    float: left;
+    .lead {
+      font-weight: 300;
+      font-size: 22px;
+      margin-bottom: 12px;
+    }
+  }
+}
 </style>

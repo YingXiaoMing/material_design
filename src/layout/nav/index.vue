@@ -4,8 +4,9 @@
       新感觉设计系统
     </div>
     <div class="handle-area">
-      <div class="preview-btn" @click="readData1">
-        <span>读取模板1</span>
+      <div class="preview-btn" @click="toList">
+        <i class="el-icon-right"></i>
+        <span>返回列表</span>
       </div>
       <div class="preview-btn" @click="saveData">
         <span>保存模板</span>
@@ -43,10 +44,14 @@ export default {
       // clearAllComponent
       this.$store.dispatch('components/clearAllComponent')
     },
-    readData1() {
+    toList() {
+      this.$router.push({
+        name: 'List'
+      });
+    },
+    readData() {
       const str = '{"Name":"测试版本","Properties":{"paperWidth":480,"paperHeight":480,"topMargin":10,"bottomMargin":10,"leftMargin":10,"rightMargin":10,"isShowBorder":true},"ViewableControls":[{"type":"H.Line","userControlledProperties":"LineMenu","title":"横线","properties":{"width":100,"height":2,"x_position":40,"y_position":56.5},"id":"2"},{"type":"LabelBox","userControlledProperties":"InputMenu","title":"文本框","properties":{"width":312,"height":51,"x_position":143,"y_position":22.5,"fontSize":"36px","isField":false,"fieldLendge":"","text":"公司固定资产卡片","color":"#000"},"id":"4"},{"type":"TextBox","userControlledProperties":"TextMenu","title":"自定义文本","properties":{"width":107,"height":45,"x_position":5,"y_position":89.5,"text":"设备名称","align":"left","fontFamily":"monospace","lineHeight":"1.5","fontSize":"24px","isBold":false,"hasBorder":false,"color":"#000","dataSource":{"origin":"EndUserInput","apiWebData":"employeeName","formular":"","option":""}},"id":"5"},{"type":"TextBox","userControlledProperties":"TextMenu","title":"自定义文本","properties":{"width":113,"height":45,"x_position":7,"y_position":157.5,"text":"资产编号","align":"left","fontFamily":"monospace","lineHeight":"1.5","fontSize":"24px","isBold":false,"hasBorder":false,"color":"#000","dataSource":{"origin":"EndUserInput","apiWebData":"employeeName","formular":"","option":""}},"id":"7"},{"type":"H.Line","userControlledProperties":"LineMenu","title":"横线","properties":{"width":100,"height":1,"x_position":117,"y_position":124.5},"id":"8"},{"type":"H.Line","userControlledProperties":"LineMenu","title":"横线","properties":{"width":100,"height":1,"x_position":119,"y_position":184.5},"id":"9"},{"type":"TextBox","userControlledProperties":"TextMenu","title":"自定义文本","properties":{"width":115,"height":51,"x_position":229,"y_position":90.5,"text":"启用日期","align":"left","fontFamily":"monospace","lineHeight":"1.5","fontSize":"24px","isBold":false,"hasBorder":false,"color":"#000","dataSource":{"origin":"EndUserInput","apiWebData":"employeeName","formular":"","option":""}},"id":"10"},{"type":"TextBox","userControlledProperties":"TextMenu","title":"自定义文本","properties":{"width":98,"height":39,"x_position":232,"y_position":158.5,"text":"使用人","align":"left","fontFamily":"monospace","lineHeight":"1.5","fontSize":"24px","isBold":false,"hasBorder":false,"color":"#000","dataSource":{"origin":"EndUserInput","apiWebData":"employeeName","formular":"","option":""}},"id":"11"},{"type":"H.Line","userControlledProperties":"LineMenu","title":"横线","properties":{"width":100,"height":1,"x_position":334,"y_position":124.5},"id":"12"},{"type":"H.Line","userControlledProperties":"LineMenu","title":"横线","properties":{"width":100,"height":1,"x_position":335,"y_position":189.5},"id":"13"},{"type":"BarCode","userControlledProperties":"BarCodeMenu","title":"条形码","properties":{"width":428,"height":207,"x_position":7,"y_position":223.5,"text":"GCP-0-002","format":"CODE128","textPosition":"bottom","lineWidth":2,"bodyHeight":40,"fontSize":14,"displayValue":true,"data":" "},"id":"14"}]}';
       const componentData = JSON.parse(str);
-      console.log(componentData);
       _.map(componentData.ViewableControls, item => {
         item.isInstance = true
       });

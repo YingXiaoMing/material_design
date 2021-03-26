@@ -38,8 +38,6 @@ export const get = name => {
    * 删除localStorage
    */
 export const remove = name => {
-  console.log('如果时间一直等')
-  console.log(name)
   if (!name) window.localStorage.clear()
   window.localStorage.removeItem(name)
   window.localStorage.removeItem(`${name}__expires__`)
