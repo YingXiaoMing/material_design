@@ -127,6 +127,7 @@ export default {
     isLine() {
       return this.componentObject.type === 'H.Line' || this.componentObject.type === 'V.Line' || this.componentObject.type === 'RectangleUi'
     },
+    
     resizeDisabledY() {
       return this.componentObject.type === 'H.Line'
     },
@@ -194,7 +195,33 @@ export default {
         default:
           break
       }
+      this.lineChecker();
       this.debounceUpdateComponent();
+    },
+    lineChecker() {
+      const liner = () => {
+        const roundX = Math.round(this.x);
+        const roundY = Math.round(this.y);
+        const result = {
+          left: 0,
+          top: 0
+        };
+        this.$store.state.components.storeList.map((item) => {
+          const left = Math.round(item.properties.x_position);
+          const top = Math.round(item.properties.y_position);
+          if (this.aimId !== item.id) {
+            if (roundX === left) {
+              result.left = left;
+            }
+            if (roundY === top) {
+              result.top = top;
+            }
+          }
+        })
+        return result;
+      }
+      const line = liner();
+      this.$store.dispatch('components/setLine', line);
     },
     onContextmenu(event) {
       this.$contextmenu({
@@ -285,7 +312,6 @@ export default {
       const { top, left } = $drag.getBoundingClientRect()
       this.downX = e.clientX - left
       this.downY = e.clientY - top
-
       on(document, 'mousemove', this.handleMouseMove)
       on(document, 'keydown', this.onKeyDown)
       on(document, 'mouseup', this.handleMouseUp)
@@ -325,11 +351,16 @@ export default {
       } else {
         this.y = y
       }
+      this.lineChecker();
       this.debounceUpdateComponent()
     },
     handleMouseUp() {
+      this.emitMoveEnd();
       off(document, 'mousemove', this.handleMouseMove)
       off(document, 'mouseup', this.handleMouseUp)
+    },
+    emitMoveEnd() {
+      this.$emit('move-end');
     },
     moveEnd() {
       setTimeout(() => {
@@ -342,8 +373,8 @@ export default {
           width: this.width || 0,
           height: this.height || 0
         }
-        this.$emit('move-end', dragData)
-      })
+        this.$emit('move-update', dragData)
+      }, 300)
     },
     handleResizeUp() {
       off(document, 'mousemove', this.handleResizeMove)

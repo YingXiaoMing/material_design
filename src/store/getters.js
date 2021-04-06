@@ -18,5 +18,7 @@ const getters = {
   activeComponent: state => state.components.activeComponent,
   components: state => state.components,
   pageAttribute: state => state.components.page,
+  lineTop: state => state.components.line.top,
+  lineLeft: state => state.components.line.left
 }
 export default getters

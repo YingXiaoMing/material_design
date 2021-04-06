@@ -14,6 +14,10 @@ const state = {
     topMargin: 10,
     bottomMargin: 10
   },
+  line: {
+    top: '',
+    left: ''
+  },
   activeComponent: '',
   componentMap: {
     customText: {
@@ -321,6 +325,11 @@ const state = {
   }
 }
 const mutations = {
+  SET_LINE: (state, payload) => {
+    const { top = 0, left = 0 } =payload;
+    state.line.top = top;
+    state.line.left = left;
+  },
   SET_MAXCOMPONENTID: (state, payload) => {
     state.maxComponentId = payload
   },
@@ -389,6 +398,9 @@ const mutations = {
 const actions = {
   setComponentID({ commit }, payload) {
     commit('SET_MAXCOMPONENTID', payload)
+  },
+  setLine({ commit }, payload = { left: 0, top: 0 }) {
+    commit('SET_LINE', payload)
   },
   addComponent({ commit }, payload) {
     const id = state.maxComponentId + 1

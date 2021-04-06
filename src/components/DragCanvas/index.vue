@@ -7,6 +7,9 @@
     v-bind="getOptions"
     @add="onAdd"
   >
+    <!-- 添加辅助线 -->
+    <div class="x-help-line" v-if="lineTop" :style="xStyle"></div>
+    <div class="y-help-line" v-if="lineLeft" :style="yStyle"></div>
     <template v-for="item in storeList">
       <drag
         ref="distanceComponent"
@@ -19,6 +22,7 @@
         :attribute="item.properties"
         :default="item.properties"
         @move-end="onMoveEnd"
+        @move-update="onMoveUpdate"
       />
     </template>
   </draggable>
@@ -47,7 +51,17 @@ export default {
     this.init()
   },
   computed: {
-    ...mapGetters(['storeList', 'activeComponent']),
+    ...mapGetters(['storeList', 'activeComponent', 'lineLeft', 'lineTop']),
+    xStyle() {
+      return {
+        top: this.lineTop + 'px'
+      }
+    },
+    yStyle() {
+      return {
+        left: this.lineLeft + 'px'
+      }
+    },
     getOptions() {
       return {
         group: {
@@ -102,7 +116,7 @@ export default {
         this.$store.dispatch('components/addComponent', { componentId, properties })
       }
     },
-    onMoveEnd(data) {
+    onMoveUpdate(data) {
       const { height, width, x, y, id, instance } = data;
       const update = {
         id,
@@ -115,6 +129,9 @@ export default {
         instance,
       }
       if (update.id) this.$store.dispatch('components/updateComponent', update)
+    },
+    onMoveEnd() {
+      this.$store.dispatch('components/setLine');
     }
   }
 }
@@ -133,6 +150,20 @@ export default {
       opacity: 0;
       z-index: -1;
   }
+}
+.x-help-line {
+  width: 100%;
+  height: 1px;
+  border-bottom: 1px dashed #198fff;
+  position: absolute;
+  z-index: 100; 
+}
+.y-help-line {
+  width: 1px;
+  height: 100%;
+  border-left: 1px dashed #198fff;
+  position: absolute;
+  z-index: 100;
 }
 </style>
 

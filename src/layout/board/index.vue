@@ -10,7 +10,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import { mapGetters } from 'vuex'
 import DragCanvas from '@/components/DragCanvas/index.vue'
