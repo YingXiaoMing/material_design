@@ -41,6 +41,18 @@ const state = {
         }
       }
     },
+    customImage: {
+      type: 'ImageBox',
+      userControlledProperties: 'ImageMenu',
+      title: '图片',
+      properties: {
+        width: 50,
+        height: 50,
+        x_position: '',
+        y_position: '',
+        content:''
+      }
+    },
     customInput: {
       type: 'LabelBox',
       userControlledProperties: 'InputMenu',
@@ -188,19 +200,11 @@ const state = {
       type: 'RectangleUi',
       userControlledProperties: '',
       title: '边框',
-      instance: false,
-      position: {
-        clientX: '',
-        clientY: ''
-      },
-      default: {
-        width: '',
-        height: '',
-        x: '',
-        y: ''
-      },
-      props: {
-
+      properties: {
+        width: 200,
+        height: 100,
+        x_position: '',
+        y_position: ''
       }
     },
     barCode: {
@@ -245,6 +249,14 @@ const state = {
             icon: 'wenben',
             component: {
               type: 'TextBox'
+            }
+          },
+          {
+            title: '图片',
+            id: 'customImage',
+            icon: 'wenben',
+            component: {
+              type: 'ImageBox'
             }
           },
           {
@@ -294,15 +306,15 @@ const state = {
             component: {
               type: 'Grid'
             }
+          },
+          {
+            title: '矩形',
+            id: 'rectangle',
+            icon: 'biankuang',
+            component: {
+              type: 'YLineUi'
+            }
           }
-          // {
-          //   title: '边框',
-          //   id: 'rectangle',
-          //   icon: 'biankuang',
-          //   component: {
-          //     type: 'YLineUi'
-          //   }
-          // }
         ]
       }
     ]

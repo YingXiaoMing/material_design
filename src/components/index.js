@@ -24,3 +24,7 @@ export { default as TableMenu } from './public/TableMenu'
 export { default as RectangleUi } from './Design/Rectangle'
 
 export { default as LabelBox } from './Design/Input'
+
+export { default as ImageBox } from './Design/Image'
+
+export { default as ImageMenu } from './public/ImageMenu'

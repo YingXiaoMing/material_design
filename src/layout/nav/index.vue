@@ -30,6 +30,10 @@ export default {
   computed: {
     ...mapGetters(['storeList', 'pageAttribute', 'components'])
   },
+  data() {
+    return {
+    }
+  },
   methods: {
     ...mapActions({
       setComponentsList: 'components/setComponentsList'

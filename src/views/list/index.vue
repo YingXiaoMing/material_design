@@ -6,7 +6,7 @@
     </div>
     <div class="filter-container">
       <el-col :span="24">
-        <el-col :span="6">
+        <div class="filte-Box">
            <el-card class="box-card">
             <div class="clearfix" slot="header">
               <span>测试标签</span>
@@ -23,13 +23,12 @@
               <p><span>大小:</span> 500 厘米 * 500 厘米</p>
             </div>
           </el-card>
-        </el-col>
+        </div>
       </el-col>
       <el-col :span="24" class="pager">
         <el-pagination :page-size="20" :page-count="10" :total="300" layout="prev, pager, next"></el-pagination>
       </el-col>
     </div>
-    
   </div>
 </template>
 <script>
@@ -53,9 +52,6 @@ export default {
       bottom: '',
       searchKey: '',
     }
-  },
-  created() {
-    console.log(this.storeList)
   },
   methods: {
     handleClick(event, data) {
@@ -156,5 +152,8 @@ export default {
       margin-bottom: 12px;
     }
   }
+}
+.filte-Box {
+  width: 468px;
 }
 </style>

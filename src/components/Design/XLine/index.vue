@@ -45,6 +45,6 @@ export default {
 
 <style lang="scss">
   .x-line-warp {
-
+    
   }
 </style>

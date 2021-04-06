@@ -1,4 +1,6 @@
-import { Text, TextMenu, XLineUi, YLineUi, QrCodeUi, LineMenu, BarCodeUi, XTable, BarCodeMenu, QrCodeMenu, TableMenu, RectangleUi, LabelBox, InputMenu } from './index'
+import { Text, TextMenu, XLineUi, YLineUi, QrCodeUi, LineMenu, BarCodeUi, XTable,
+   BarCodeMenu, QrCodeMenu, TableMenu, RectangleUi, LabelBox, 
+   InputMenu, ImageBox, ImageMenu } from './index'
 export default [
   {
     id: 'TextBox',
@@ -7,6 +9,14 @@ export default [
   {
     id: 'TextMenu',
     component: TextMenu
+  },
+  {
+    id: 'ImageBox',
+    component: ImageBox
+  },
+  {
+    id: 'ImageMenu',
+    component: ImageMenu
   },
   {
     id: 'LabelBox',
@@ -51,9 +61,9 @@ export default [
   {
     id: 'TableMenu',
     component: TableMenu
+  },
+  {
+    id: 'RectangleUi',
+    component: RectangleUi
   }
-  // {
-  //   id: 'RectangleUi',
-  //   component: RectangleUi
-  // }
 ]

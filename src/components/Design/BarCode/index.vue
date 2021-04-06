@@ -1,5 +1,6 @@
 <template>
-  <img :id="'barCode-' + elementId" ref="img" class="barcode" :class="elementId" :style="getStyle" alt="barcode" draggable="false">
+  <img :id="'barCode-' + elementId" ref="img" class="barcode"
+   :class="elementId" :style="getStyle" alt="barcode" draggable="false">
 </template>
 <script>
 import barcode from 'jsbarcode'
