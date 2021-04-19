@@ -42,6 +42,11 @@ export const constantRoutes = [
     path: '/list',
     name: 'List',
     component: () => import('@/views/list/index')
+  },
+  {
+    path: '/PrintList',
+    name: 'PrintList',
+    component: () => import('@/views/printList/index')
   }
 ]
 

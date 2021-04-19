@@ -12,7 +12,7 @@
               <span>测试标签</span>
               <div class="right">
                 <i class="el-icon-edit label_icon" @click="toEdit"></i>
-                <i class="el-icon-printer label_icon"></i>
+                <i class="el-icon-printer label_icon" @click="toPrint"></i>
               </div>
             </div>
             <div class="img-div">
@@ -83,6 +83,11 @@ export default {
           id: 1
         }
       });
+    },
+    toPrint() {
+      this.$router.push({
+        name: 'PrintList'
+      })
     },
     printData() {
       this.$pdf('star_moban')

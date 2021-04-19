@@ -7,8 +7,9 @@
     v-bind="getOptions"
     @add="onAdd"
   >
-    <!-- 添加辅助线 -->
+    <!-- 添加X轴辅助线 -->
     <div class="x-help-line" v-if="lineTop" :style="xStyle"></div>
+    <!-- 添加Y轴辅助线 -->
     <div class="y-help-line" v-if="lineLeft" :style="yStyle"></div>
     <template v-for="item in storeList">
       <drag
@@ -128,6 +129,7 @@ export default {
         },
         instance,
       }
+      
       if (update.id) this.$store.dispatch('components/updateComponent', update)
     },
     onMoveEnd() {

@@ -19,6 +19,9 @@ const getters = {
   components: state => state.components,
   pageAttribute: state => state.components.page,
   lineTop: state => state.components.line.top,
-  lineLeft: state => state.components.line.left
+  lineLeft: state => state.components.line.left,
+  // 测试标签版本
+  printData: state => state.components.componentPrintDataList
+
 }
 export default getters

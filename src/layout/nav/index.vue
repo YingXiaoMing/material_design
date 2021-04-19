@@ -28,7 +28,7 @@ import Cookies from 'js-cookie'
 import _ from 'lodash'
 export default {
   computed: {
-    ...mapGetters(['storeList', 'pageAttribute', 'components'])
+    ...mapGetters(['storeList', 'pageAttribute', 'components', 'printData'])
   },
   data() {
     return {
@@ -41,7 +41,7 @@ export default {
     download() {
       this.$store.dispatch('components/setActive', '')
       this.$nextTick(() => {
-        this.$pdf('canvas_board')
+        this.$pdf(this.printData.length);
       })
     },
     clearData() {

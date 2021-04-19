@@ -252,12 +252,10 @@ export default {
     },
     setLayoutScheme() {
       const $drag = this.$refs.drag
-      const isInstance = this.isInstance
       const element = $drag.firstElementChild
       const defaultData = this.attribute
       const canvas = document.querySelector('.drag-canvas-warp.board-canvas')
       const { width, height } = $drag.getBoundingClientRect()
-      const { defaultX, defaultY } = this
       const { top, left } = element.getBoundingClientRect()
       this.board = canvas.getBoundingClientRect()
       this.offsetLeft = left

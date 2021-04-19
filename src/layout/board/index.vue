@@ -2,7 +2,11 @@
   <div class="board-warp">
     <div class="view-wrapper" ref="view">
     <!-- <div class="view-wrapper" ref="view" :style="viewWrapStyle"> -->
-      <div class="canvas-wrapper" :style="styleObject">
+      
+      
+      
+      <div class="canvas-wrapper" :style="styleObject" id="printPage">
+        <!-- <HiddenArea></HiddenArea> -->
         <div class="board_container" :style="getBoardStyleObject">
           <drag-canvas class="board-canvas" ref="canvas"/>
         </div>
@@ -12,10 +16,12 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
+import HiddenArea from '../printArea/index'
 import DragCanvas from '@/components/DragCanvas/index.vue'
 export default {
   components: {
-    DragCanvas
+    DragCanvas,
+    HiddenArea
   },
   computed: {
     ...mapGetters(['activeComponent', 'pageAttribute']),

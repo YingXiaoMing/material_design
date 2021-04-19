@@ -4,6 +4,7 @@ import barcode from 'jsbarcode';
 const state = {
   maxComponentId: 0,
   storeList: [],
+  componentPrintDataList:[],
   page: {
     width: 500,
     height: 500,
@@ -336,6 +337,9 @@ const mutations = {
   SET_STORELIST: (state, payload) => {
     state.storeList = payload
   },
+  SET_PRINTDATA: (state, payload) => {
+    state.componentPrintDataList = payload
+  },
   SET_LABELVERSION: (state, contain) => {
     state.page.label = contain.name
   },
@@ -447,6 +451,9 @@ const actions = {
   },
   setComponentsList({ commit, state }, payload) {
     commit('SET_STORELIST', payload)
+  },
+  setPrintComponent({ commit, state }, payload) {
+    commit('SET_PRINTDATA', payload)
   },
   updateComponent({ commit, state }, payload) {
     const current = state.storeList.find(item => item.id === payload.id);
