@@ -23,8 +23,6 @@ PDF.install = function(Vue, options) {
             let position = 0;
             var imageWidth = 555.28;
             var imageHeight = 555.28 / CWidth * CHeight;
-
-
             const jpeg = canvas.toDataURL("image/jpeg", 1.0);
             const doc = new JsPDF("", "pt","a4");
 
