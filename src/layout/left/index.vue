@@ -114,7 +114,7 @@ export default {
     this.loadData()
   },
   computed: {
-    ...mapGetters(['componentList', 'storeList', 'labelVersion', 'components']),
+    ...mapGetters(['componentList', 'storeList', 'labelVersion', 'components', 'pageAttribute']),
     dragOptions() {
       return {
         sort: false,
@@ -157,6 +157,8 @@ export default {
     },
     getOptionData() {
       this.getTagList().then(res => {
+        console.log('测试标签的数据');
+        console.log(res);
         this.versionOption = _.map(res, item => {
           return {
             label: item.name,
@@ -166,22 +168,23 @@ export default {
       })
     },
     handleSelectChange(val) {
-      // this.getContainData(val)
+      // console.log('越短越有戏');
+      this.getContainData(val)
     },
     saveLabelData() {
       const newComponentData = _.forEach(this.storeList, (item, key) => {
         _.unset(item, 'isInstance')
       })
       const jsonData = {
-        Name: this.labelVersion.name,
+        Name: this.pageAttribute.name,
         Properties: {
-          paperWidth: this.labelVersion.width,
-          paperHeight: this.labelVersion.height,
-          topMargin: this.labelVersion.TopMargin,
-          bottomMargin: this.labelVersion.BottomMargin,
-          leftMargin: this.labelVersion.LeftMargin,
-          rightMargin: this.labelVersion.RightMargin,
-          isShowBorder: this.labelVersion.isShowBorder
+          paperWidth: this.pageAttribute.width,
+          paperHeight: this.pageAttribute.height,
+          topMargin: this.pageAttribute.topMargin,
+          bottomMargin: this.pageAttribute.bottomMargin,
+          leftMargin: this.pageAttribute.leftMargin,
+          rightMargin: this.pageAttribute.rightMargin,
+          isShowBorder: this.pageAttribute.isShowBorder
         },
         ViewableControls: newComponentData,
         MaxComponentId: this.components.maxComponentId
@@ -189,15 +192,17 @@ export default {
       const componentData = JSON.stringify(jsonData)
       const param = {
         id: this.model.version,
-        name: this.labelVersion.name,
+        name: this.pageAttribute.name,
         content: componentData
       }
+      console.log(param);
       this.updateTagData(param).then(res => {
         this.$message.success('保存成功')
       })
     },
     loadData() {
       this.getTagList().then(res => {
+        console.log(res);
         this.versionOption = _.map(res, item => {
           return {
             label: item.name,
@@ -206,38 +211,50 @@ export default {
         })
         const firstValue = this.versionOption[0].value
         this.model.version = firstValue
-        // this.getContainData(firstValue)
+        this.getContainData(firstValue)
       })
     },
     getContainData(id) {
       showLoading()
       this.getTagContainById(id).then(res => {
-        hideLoading()
-        const newData = _.assign(this.labelVersion, {
-          name: res.name
-        })
-        this.setLabelVersion(newData)
-        const content = res.content
-        if (!_.isEmpty(content)) {
-          const componentData = JSON.parse(content)
-          this.$store.dispatch('label/setBoardWidth', componentData.Properties.paperWidth)
-          this.$store.dispatch('label/setBoardHeight', componentData.Properties.paperHeight)
-          this.$store.dispatch('label/setBoardLeftMargin', componentData.Properties.leftMargin)
-          this.$store.dispatch('label/setBoardRightMargin', componentData.Properties.rightMargin)
-          this.$store.dispatch('label/setBoardTopMargin', componentData.Properties.topMargin)
-          this.$store.dispatch('label/setBoardBottomMargin', componentData.Properties.bottomMargin)
+        hideLoading();
+        const componentStr = res.content;
+        if (!_.isEmpty(componentStr)) {
+          const componentData = JSON.parse(componentStr);
           _.map(componentData.ViewableControls, item => {
             item.isInstance = true
-          })
-          this.setComponentsList(componentData.ViewableControls)
-          if (componentData.MaxComponentId) {
-            this.$store.dispatch('components/setComponentID', componentData.MaxComponentId)
-          } else {
-            this.$store.dispatch('components/setComponentID', 0)
-          }
+          });
+          this.$store.dispatch('components/setComponentsList', componentData.ViewableControls);
+          this.$store.dispatch('components/setComponentID', componentData.MaxComponentId);
         } else {
-          this.clearAllComponent()
+          this.$store.dispatch('components/clearAllComponent');
         }
+        // const componentPrintData = JSON.parse(componentStr);
+        // const newData = _.assign(this.labelVersion, {
+        //   name: res.name
+        // })
+        // this.setLabelVersion(newData)
+        // const content = res.content
+        // if (!_.isEmpty(content)) {
+        //   const componentData = JSON.parse(content)
+        //   this.$store.dispatch('label/setBoardWidth', componentData.Properties.paperWidth)
+        //   this.$store.dispatch('label/setBoardHeight', componentData.Properties.paperHeight)
+        //   this.$store.dispatch('label/setBoardLeftMargin', componentData.Properties.leftMargin)
+        //   this.$store.dispatch('label/setBoardRightMargin', componentData.Properties.rightMargin)
+        //   this.$store.dispatch('label/setBoardTopMargin', componentData.Properties.topMargin)
+        //   this.$store.dispatch('label/setBoardBottomMargin', componentData.Properties.bottomMargin)
+        //   _.map(componentData.ViewableControls, item => {
+        //     item.isInstance = true
+        //   })
+        //   this.setComponentsList(componentData.ViewableControls)
+        //   if (componentData.MaxComponentId) {
+        //     this.$store.dispatch('components/setComponentID', componentData.MaxComponentId)
+        //   } else {
+        //     this.$store.dispatch('components/setComponentID', 0)
+        //   }
+        // } else {
+        //   this.clearAllComponent()
+        // }
       })
     },
     addNewField() {

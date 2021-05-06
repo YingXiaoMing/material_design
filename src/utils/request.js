@@ -29,8 +29,10 @@ axios.interceptors.response.use(response => {
   if (typeof response.data !== 'object') {
     return response.data
   }
-  if (response.data.failureReason && !response.data.isSuccess) {
-    errorMessage = response.data.failureReason || '系统繁忙，请稍后重试'
+  console.log('如果是测试数据');
+  console.log(response);
+  if (response.data.code != 1000) {
+    errorMessage = response.data.message || '系统繁忙，请稍后重试'
   }
   if (errorMessage) {
     Notification({
@@ -40,7 +42,7 @@ axios.interceptors.response.use(response => {
     })
     return Promise.reject(response.data)
   }
-  return response.data.payload
+  return response.data;
 }, error => {
   if (error && error.response) {
     if (error.response.data.type === 'application/json') {
@@ -57,7 +59,7 @@ axios.interceptors.response.use(response => {
       reader.readAsText(error.response.data)
       return Promise.reject(error.response)
     }
-    error.message = error.response.data.failureReason
+    error.message = error.response.data.message
     // switch (error.response.status) {
     //   case 400:
     //     // error.message = '错误请求'

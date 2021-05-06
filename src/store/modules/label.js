@@ -43,11 +43,7 @@ export default {
   },
   actions: {
     async getTagList(ctx) {
-      const param = {
-        PageIndex: 1,
-        PageSize: 999
-      }
-      const res = await labelService.getTagList(param)
+      const res = await labelService.getTagList()
       return res.data
     },
     async postTagData(ctx, param) {
@@ -56,7 +52,7 @@ export default {
     },
     async getTagContainById(ctx, id) {
       const res = await labelService.getTagContainById(id)
-      return res
+      return res.data
     },
     async updateTagData(ctx, param) {
       const res = await labelService.updateTagData(param)
