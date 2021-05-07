@@ -4,6 +4,7 @@ import barcode from 'jsbarcode';
 const state = {
   maxComponentId: 0,
   storeList: [],
+  operateId: '',
   componentPrintDataList:[],
   page: {
     width: 500,
@@ -339,9 +340,10 @@ const mutations = {
   },
   SET_PRINTDATA: (state, payload) => {
     state.componentPrintDataList = payload
+    console.log(payload);
   },
   SET_LABELVERSION: (state, contain) => {
-    state.page.label = contain.name
+    state.page.name = contain;
   },
   ADD_COMPONENT: (state, payload) => {
     state.storeList.push(payload)
@@ -389,6 +391,15 @@ const mutations = {
       }
     })
   },
+  SET_BOARD_PROPERTIES: (state, payload) => {
+    state.page.width = payload.paperWidth;
+    state.page.height = payload.paperHeight;
+    state.page.leftMargin = payload.leftMargin;
+    state.page.rightMargin = payload.rightMargin;
+    state.page.topMargin = payload.topMargin;
+    state.page.bottomMargin = payload.bottomMargin;
+    state.page.isShowBorder = payload.isShowBorder;
+  },
   UPDATE_COMPONENT: (state, component) => {
     state.storeList = state.storeList.map((item) => {
       let newItem = { ...item }
@@ -397,9 +408,15 @@ const mutations = {
       }
       return newItem
     })
+  },
+  SET_OPERATEID: (state, payload) => {
+    state.operateId = payload;
   }
 }
 const actions = {
+  setOperateID({ commit }, payload) {
+    commit('SET_OPERATEID', payload);
+  },
   setComponentID({ commit }, payload) {
     commit('SET_MAXCOMPONENTID', payload)
   },
@@ -427,6 +444,9 @@ const actions = {
   },
   setBoardWidth({ commit }, width) {
     commit('SET_BOARDWIDTH', width)
+  },
+  setComponentProperties({ commit }, payload) {
+    commit('SET_BOARD_PROPERTIES', payload)
   },
   setBoardLeftMargin({ commit }, payload) {
     commit('SET_LEFTMARGIN', payload)

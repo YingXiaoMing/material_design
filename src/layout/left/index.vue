@@ -11,7 +11,7 @@
           </draggable>
         </template>
       </el-collapse-item>
-      <el-collapse-item name="LabelVersion" title="标签版本">
+      <!-- <el-collapse-item name="LabelVersion" title="标签版本">
         <div class="Label_Version">
           <el-form :model="model">
             <el-form-item label="标签版本:">
@@ -39,7 +39,7 @@
             </el-form-item>
           </el-form>
         </div>
-      </el-collapse-item>
+      </el-collapse-item> -->
     </el-collapse>
     <page-dialog
       :title="dialogInfo.title"
@@ -111,7 +111,7 @@ export default {
     }
   },
   created() {
-    this.loadData()
+    // this.loadData()
   },
   computed: {
     ...mapGetters(['componentList', 'storeList', 'labelVersion', 'components', 'pageAttribute']),
@@ -157,8 +157,6 @@ export default {
     },
     getOptionData() {
       this.getTagList().then(res => {
-        console.log('测试标签的数据');
-        console.log(res);
         this.versionOption = _.map(res, item => {
           return {
             label: item.name,
@@ -168,13 +166,12 @@ export default {
       })
     },
     handleSelectChange(val) {
-      // console.log('越短越有戏');
       this.getContainData(val)
     },
     saveLabelData() {
       const newComponentData = _.forEach(this.storeList, (item, key) => {
         _.unset(item, 'isInstance')
-      })
+      });
       const jsonData = {
         Name: this.pageAttribute.name,
         Properties: {
@@ -188,7 +185,7 @@ export default {
         },
         ViewableControls: newComponentData,
         MaxComponentId: this.components.maxComponentId
-      }
+      };
       const componentData = JSON.stringify(jsonData)
       const param = {
         id: this.model.version,
@@ -202,7 +199,6 @@ export default {
     },
     loadData() {
       this.getTagList().then(res => {
-        console.log(res);
         this.versionOption = _.map(res, item => {
           return {
             label: item.name,
@@ -221,40 +217,22 @@ export default {
         const componentStr = res.content;
         if (!_.isEmpty(componentStr)) {
           const componentData = JSON.parse(componentStr);
+          // 设置基础属性
+          this.$store.dispatch('components/setComponentProperties', componentData.Properties);
+          this.$store.dispatch('components/setLabelVersion', componentData.Name);
+          const elementData = _.cloneDeep(componentData.ViewableControls);
+
+          console.log('生成新的数据');
+          this.$store.dispatch('components/setPrintComponent', [elementData]);
           _.map(componentData.ViewableControls, item => {
             item.isInstance = true
           });
           this.$store.dispatch('components/setComponentsList', componentData.ViewableControls);
           this.$store.dispatch('components/setComponentID', componentData.MaxComponentId);
         } else {
+          this.$store.dispatch('components/setLabelVersion', res.name);
           this.$store.dispatch('components/clearAllComponent');
         }
-        // const componentPrintData = JSON.parse(componentStr);
-        // const newData = _.assign(this.labelVersion, {
-        //   name: res.name
-        // })
-        // this.setLabelVersion(newData)
-        // const content = res.content
-        // if (!_.isEmpty(content)) {
-        //   const componentData = JSON.parse(content)
-        //   this.$store.dispatch('label/setBoardWidth', componentData.Properties.paperWidth)
-        //   this.$store.dispatch('label/setBoardHeight', componentData.Properties.paperHeight)
-        //   this.$store.dispatch('label/setBoardLeftMargin', componentData.Properties.leftMargin)
-        //   this.$store.dispatch('label/setBoardRightMargin', componentData.Properties.rightMargin)
-        //   this.$store.dispatch('label/setBoardTopMargin', componentData.Properties.topMargin)
-        //   this.$store.dispatch('label/setBoardBottomMargin', componentData.Properties.bottomMargin)
-        //   _.map(componentData.ViewableControls, item => {
-        //     item.isInstance = true
-        //   })
-        //   this.setComponentsList(componentData.ViewableControls)
-        //   if (componentData.MaxComponentId) {
-        //     this.$store.dispatch('components/setComponentID', componentData.MaxComponentId)
-        //   } else {
-        //     this.$store.dispatch('components/setComponentID', 0)
-        //   }
-        // } else {
-        //   this.clearAllComponent()
-        // }
       })
     },
     addNewField() {

@@ -12,6 +12,7 @@
 <script>
 import { HeaderNav, LeftMenu, Board, RightMenu } from '@/layout/index.js'
 import HiddenArea from '@/layout/printArea/index'
+import { mapActions } from 'vuex'
 import _ from 'lodash';
 export default {
   components: {
@@ -23,6 +24,29 @@ export default {
   },
   created() {
     const ids = this.$route.query.id;
+    if (ids) {
+      this.getTagContainById(ids).then(res => {
+        const componentStr = res.content;
+        this.$store.dispatch('components/setOperateID', ids);
+        if (!_.isEmpty(componentStr)) {
+          const componentData = JSON.parse(componentStr);
+          // 设置基础属性
+          this.$store.dispatch('components/setComponentProperties', componentData.Properties);
+          this.$store.dispatch('components/setLabelVersion', componentData.Name);
+          const elementData = _.cloneDeep(componentData.ViewableControls);
+
+          this.$store.dispatch('components/setPrintComponent', [elementData]);
+          _.map(componentData.ViewableControls, item => {
+            item.isInstance = true
+          });
+          this.$store.dispatch('components/setComponentsList', componentData.ViewableControls);
+          this.$store.dispatch('components/setComponentID', componentData.MaxComponentId);
+        } else {
+          this.$store.dispatch('components/setLabelVersion', res.name);
+          this.$store.dispatch('components/clearAllComponent');
+        }
+      });
+    }
     // if (ids) {
     //   const str = '{"Name":"测试版本","Properties":{"paperWidth":480,"paperHeight":480,"topMargin":10,"bottomMargin":10,"leftMargin":10,"rightMargin":10,"isShowBorder":true},"ViewableControls":[{"type":"H.Line","userControlledProperties":"LineMenu","title":"横线","properties":{"width":100,"height":2,"x_position":40,"y_position":56.5},"id":"1"},{"type":"LabelBox","userControlledProperties":"InputMenu","title":"文本框","properties":{"width":312,"height":51,"x_position":143,"y_position":22.5,"fontSize":"36px","isField":false,"fieldLendge":"","text":"公司固定资产卡片","color":"#000"},"id":"2"},{"type":"TextBox","userControlledProperties":"TextMenu","title":"自定义文本","properties":{"width":107,"height":45,"x_position":5,"y_position":89.5,"text":"设备名称","align":"left","fontFamily":"monospace","lineHeight":"1.5","fontSize":"24px","isBold":false,"hasBorder":false,"color":"#000","dataSource":{"origin":"EndUserInput","apiWebData":"employeeName","formular":"","option":""}},"id":"3"},{"type":"TextBox","userControlledProperties":"TextMenu","title":"自定义文本","properties":{"width":113,"height":45,"x_position":7,"y_position":157.5,"text":"资产编号","align":"left","fontFamily":"monospace","lineHeight":"1.5","fontSize":"24px","isBold":false,"hasBorder":false,"color":"#000","dataSource":{"origin":"EndUserInput","apiWebData":"employeeName","formular":"","option":""}},"id":"4"},{"type":"H.Line","userControlledProperties":"LineMenu","title":"横线","properties":{"width":100,"height":1,"x_position":117,"y_position":124.5},"id":"5"},{"type":"H.Line","userControlledProperties":"LineMenu","title":"横线","properties":{"width":100,"height":1,"x_position":119,"y_position":184.5},"id":"6"},{"type":"TextBox","userControlledProperties":"TextMenu","title":"自定义文本","properties":{"width":115,"height":51,"x_position":229,"y_position":90.5,"text":"启用日期","align":"left","fontFamily":"monospace","lineHeight":"1.5","fontSize":"24px","isBold":false,"hasBorder":false,"color":"#000","dataSource":{"origin":"EndUserInput","apiWebData":"employeeName","formular":"","option":""}},"id":"7"},{"type":"TextBox","userControlledProperties":"TextMenu","title":"自定义文本","properties":{"width":98,"height":39,"x_position":232,"y_position":158.5,"text":"使用人","align":"left","fontFamily":"monospace","lineHeight":"1.5","fontSize":"24px","isBold":false,"hasBorder":false,"color":"#000","dataSource":{"origin":"EndUserInput","apiWebData":"employeeName","formular":"","option":""}},"id":"8"},{"type":"H.Line","userControlledProperties":"LineMenu","title":"横线","properties":{"width":100,"height":1,"x_position":334,"y_position":124.5},"id":"9"},{"type":"H.Line","userControlledProperties":"LineMenu","title":"横线","properties":{"width":100,"height":1,"x_position":335,"y_position":189.5},"id":"10"},{"type":"BarCode","userControlledProperties":"BarCodeMenu","title":"条形码","properties":{"width":428,"height":207,"x_position":7,"y_position":223.5,"text":"GCP-0-002","format":"CODE128","textPosition":"bottom","lineWidth":2,"bodyHeight":40,"fontSize":14,"displayValue":true,"data":" "},"id":"11"}]}';
     //   // 细数惭愧
@@ -47,6 +71,9 @@ export default {
     // }
   },
   methods: {
+    ...mapActions({
+      getTagContainById: 'label/getTagContainById'
+    }),
     onPageSizeChange() {
       this.$refs.board.initDragBasic();
     }

@@ -5,16 +5,17 @@
     </div>
     <div class="handle-area">
       <div class="preview-btn" @click="toList">
-        <i class="el-icon-right"></i>
+        <svg-icon icon-class="return" />
         <span>返回列表</span>
       </div>
       <div class="preview-btn" @click="saveData">
+        <svg-icon icon-class="save" />
         <span>保存模板</span>
       </div>
-      <div class="preview-btn" @click="download">
+      <!-- <div class="preview-btn" @click="download">
         <i class="el-icon-reading" />
         <span>打印预览</span>
-      </div>
+      </div> -->
       <div class="preview-btn" @click="clearData">
         <i class="el-icon-magic-stick" />
         <span>清空画布</span>
@@ -36,7 +37,8 @@ export default {
   },
   methods: {
     ...mapActions({
-      setComponentsList: 'components/setComponentsList'
+      setComponentsList: 'components/setComponentsList',
+      updateTagData: 'label/updateTagData',
     }),
     download() {
       this.$store.dispatch('components/setActive', '')
@@ -77,10 +79,18 @@ export default {
           rightMargin: this.pageAttribute.rightMargin,
           isShowBorder: this.pageAttribute.isShowBorder
         },
-        ViewableControls: newComponentData
+        ViewableControls: newComponentData,
+        MaxComponentId: this.components.maxComponentId
       }
-      const jsonString = JSON.stringify(jsonData)
-      console.log(jsonString)
+      const componentData = JSON.stringify(jsonData)
+      const param = {
+        id: this.components.operateId,
+        name: this.pageAttribute.name,
+        content: componentData
+      };
+      this.updateTagData(param).then(res => {
+        this.$message.success('保存成功');
+      })
       // window.localStorage.setItem('app_components', res);
       // this.$message.success('保存成功');
     }
@@ -128,7 +138,7 @@ export default {
                 text-decoration: underline;
                 color: $skyBlue;
             }
-            i {
+            i,.svg-icon {
                 margin-right: 5px;
             }
         }

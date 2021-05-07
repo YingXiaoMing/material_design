@@ -3,27 +3,31 @@
     <div class="filter-container">
       <el-input v-model="searchKey" placeholder="输入名字查询模板" style="width: 220px"></el-input>
       <el-button type="primary" style="marginLeft: 10px">查询</el-button>
+      <el-button type="success" style="marginLeft: 10px">新增</el-button>
     </div>
     <div class="filter-container">
       <el-col :span="24">
-        <div class="filte-Box">
-           <el-card class="box-card">
-            <div class="clearfix" slot="header">
-              <span>测试标签</span>
-              <div class="right">
-                <i class="el-icon-edit label_icon" @click="toEdit"></i>
-                <i class="el-icon-printer label_icon" @click="toPrint"></i>
+        <template v-for="item in vList">
+          <div class="filte-Box">
+            <el-card class="box-card">
+              <div class="clearfix" slot="header">
+                <span style="font-weight: bold">{{ item.name }}</span>
+                <div class="right">
+                  <i class="el-icon-edit label_icon" @click="toEdit(item.id)"></i>
+                  <i class="el-icon-printer label_icon" @click="toPrint"></i>
+                  <i class="el-icon-delete label_icon" style="color:red"></i>
+                </div>
               </div>
-            </div>
-            <div class="img-div">
-              <img src="@/assets/test.png"/>
-            </div>
-            <div class="text-div">
-              <p class="lead">测试标签</p>
-              <p><span>大小:</span> 500 厘米 * 500 厘米</p>
-            </div>
-          </el-card>
-        </div>
+              <div class="img-div">
+                <img src="@/assets/test.png"/>
+              </div>
+              <div class="text-div">
+                <p class="lead"><span>名称:</span> {{ item.name }}</p>
+                <p class="lead"><span>大小:</span> {{ item.width }} 厘米 * {{ item.height }} 厘米</p>
+              </div>
+            </el-card>
+          </div>
+        </template>
       </el-col>
       <el-col :span="24" class="pager">
         <el-pagination :page-size="20" :page-count="10" :total="300" layout="prev, pager, next"></el-pagination>
@@ -33,7 +37,7 @@
 </template>
 <script>
 import PageDialog from '@/components/PageDialog'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import Drag from '@/components/DragShow'
 
 export default {
@@ -51,9 +55,33 @@ export default {
       top: '',
       bottom: '',
       searchKey: '',
+      vList: [{
+        name: '测试标签',
+        width: 220,
+        height: 330,
+        id: '11'
+      }],
     }
   },
+  created() {
+    this.getTagList().then(res => {
+      this.vList = _.map(res, item => {
+        const componentData =  JSON.parse(item.content);
+        const width = componentData.Properties.paperWidth;
+        const height = componentData.Properties.paperHeight;
+        return {
+          name: item.name,
+          width: width,
+          height: height,
+          id: item.id,
+        }
+      });
+    });
+  },
   methods: {
+    ...mapActions({
+      getTagList: 'label/getTagList',
+    }),
     handleClick(event, data) {
       switch (event) {
         case 'close':
@@ -76,11 +104,13 @@ export default {
       })
       window.open(routeData.href, '_blank')
     },
-    toEdit() {
+    toEdit(id) {
+      console.log('nonstop');
+      console.log(id);
       this.$router.push({
         name: 'Create',
         query: {
-          id: 1
+          id
         }
       });
     },
@@ -136,11 +166,11 @@ export default {
   .img-div {
     float: left;
     width: 206px;
-    height: 266px;
-    border: 1px solid #ccc;
+    height: 180px;
+    // border: 1px solid #ccc;
     text-align: center;
     margin: 5px;
-    background-color: #ddd;
+    // background-color: #ddd;
     img {
       max-height: 200px;
       max-width: 200px;
@@ -152,13 +182,19 @@ export default {
     margin: 5px;;
     float: left;
     .lead {
-      font-weight: 300;
-      font-size: 22px;
+      // font-weight: 300;
+      font-size: 14px;
+      // font-weight: bold;
       margin-bottom: 12px;
+      span {
+        font-weight: 600;
+      }
     }
   }
 }
 .filte-Box {
-  width: 468px;
+  width: 438px;
+  float: left;
+  margin-right: 18px;
 }
 </style>
