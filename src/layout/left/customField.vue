@@ -35,35 +35,12 @@
         <el-col :span="24">
           <el-form-item label="绑定类型:">
             <el-radio-group v-model="form.type">
-              <el-radio label="basic">基础数据</el-radio>
-              <el-radio label="custom">自定义</el-radio>
+              <el-radio label="basic">自定义</el-radio>
+              <el-radio label="custom">基础数据</el-radio>
             </el-radio-group>
           </el-form-item>
         </el-col>
-        <template v-if="form.type == 'basic'">
-          <el-col :span="24">
-            <el-form-item label="来源方式:">
-              <el-select v-model="form.origin">
-                <el-option label="生产线" value="生产线" />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="显示字段:">
-              <el-select v-model="form.field">
-                <el-option label="生产线" value="生产线" />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="字段内容:">
-              <el-select v-model="form.fieldContain">
-                <el-option label="生产线" value="生产线" />
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </template>
-        <template v-else>
+        <template v-if="form.type === 'custom'">
           <e-col :span="24">
             <el-form-item label="自定义数据:">
               <el-input v-model="form.customFiled" :rows="4" type="textarea" />

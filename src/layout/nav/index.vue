@@ -8,6 +8,10 @@
         <svg-icon icon-class="return" />
         <span>返回列表</span>
       </div>
+      <div class="preview-btn" @click="customData">
+        <svg-icon icon-class="customs"></svg-icon>
+        <span>自定义字段</span>
+      </div>
       <div class="preview-btn" @click="saveData">
         <svg-icon icon-class="save" />
         <span>保存模板</span>
@@ -21,18 +25,43 @@
         <span>清空画布</span>
       </div>
     </div>
+    <page-dialog
+      :title="dialogInfo.title"
+      :b-list="dialogInfo.bList"
+      :visible.sync="dialogInfo.visible"
+      width="808px"
+      @handleClick="handleClick"
+    >
+      <custom-field />
+    </page-dialog>
   </div>
+  
 </template>
 <script>
+import PageDialog from '@/components/PageDialog'
 import { mapGetters, mapActions } from 'vuex'
+import CustomField from '../left/customField'
 import Cookies from 'js-cookie'
 import _ from 'lodash'
 export default {
   computed: {
     ...mapGetters(['storeList', 'pageAttribute', 'components', 'printData'])
   },
+  components: {
+    PageDialog,
+    CustomField
+  },
   data() {
     return {
+      dialogInfo: {
+        title: '自定义字段',
+        visible: false,
+        type: 0, //  0代表新增  1代表编辑
+        bList: [
+          { label: '关闭', show: true, event: 'close' },
+          { label: '保存', show: true, event: 'save' }
+        ]
+      },
     }
   },
   methods: {
@@ -54,6 +83,21 @@ export default {
       this.$router.push({
         name: 'List'
       });
+    },
+    handleClick(event, data) {
+      switch (event) {
+        case 'close':
+          this.dialogInfo.visible = false;
+          break;
+        case 'save':
+          this.dialogInfo.visible = false;
+          break;
+        default:
+          break;
+      }
+    },
+    customData() {
+      this.dialogInfo.visible = true;
     },
     readData() {
       const str = '{"Name":"测试版本","Properties":{"paperWidth":480,"paperHeight":480,"topMargin":10,"bottomMargin":10,"leftMargin":10,"rightMargin":10,"isShowBorder":true},"ViewableControls":[{"type":"H.Line","userControlledProperties":"LineMenu","title":"横线","properties":{"width":100,"height":2,"x_position":40,"y_position":56.5},"id":"2"},{"type":"LabelBox","userControlledProperties":"InputMenu","title":"文本框","properties":{"width":312,"height":51,"x_position":143,"y_position":22.5,"fontSize":"36px","isField":false,"fieldLendge":"","text":"公司固定资产卡片","color":"#000"},"id":"4"},{"type":"TextBox","userControlledProperties":"TextMenu","title":"自定义文本","properties":{"width":107,"height":45,"x_position":5,"y_position":89.5,"text":"设备名称","align":"left","fontFamily":"monospace","lineHeight":"1.5","fontSize":"24px","isBold":false,"hasBorder":false,"color":"#000","dataSource":{"origin":"EndUserInput","apiWebData":"employeeName","formular":"","option":""}},"id":"5"},{"type":"TextBox","userControlledProperties":"TextMenu","title":"自定义文本","properties":{"width":113,"height":45,"x_position":7,"y_position":157.5,"text":"资产编号","align":"left","fontFamily":"monospace","lineHeight":"1.5","fontSize":"24px","isBold":false,"hasBorder":false,"color":"#000","dataSource":{"origin":"EndUserInput","apiWebData":"employeeName","formular":"","option":""}},"id":"7"},{"type":"H.Line","userControlledProperties":"LineMenu","title":"横线","properties":{"width":100,"height":1,"x_position":117,"y_position":124.5},"id":"8"},{"type":"H.Line","userControlledProperties":"LineMenu","title":"横线","properties":{"width":100,"height":1,"x_position":119,"y_position":184.5},"id":"9"},{"type":"TextBox","userControlledProperties":"TextMenu","title":"自定义文本","properties":{"width":115,"height":51,"x_position":229,"y_position":90.5,"text":"启用日期","align":"left","fontFamily":"monospace","lineHeight":"1.5","fontSize":"24px","isBold":false,"hasBorder":false,"color":"#000","dataSource":{"origin":"EndUserInput","apiWebData":"employeeName","formular":"","option":""}},"id":"10"},{"type":"TextBox","userControlledProperties":"TextMenu","title":"自定义文本","properties":{"width":98,"height":39,"x_position":232,"y_position":158.5,"text":"使用人","align":"left","fontFamily":"monospace","lineHeight":"1.5","fontSize":"24px","isBold":false,"hasBorder":false,"color":"#000","dataSource":{"origin":"EndUserInput","apiWebData":"employeeName","formular":"","option":""}},"id":"11"},{"type":"H.Line","userControlledProperties":"LineMenu","title":"横线","properties":{"width":100,"height":1,"x_position":334,"y_position":124.5},"id":"12"},{"type":"H.Line","userControlledProperties":"LineMenu","title":"横线","properties":{"width":100,"height":1,"x_position":335,"y_position":189.5},"id":"13"},{"type":"BarCode","userControlledProperties":"BarCodeMenu","title":"条形码","properties":{"width":428,"height":207,"x_position":7,"y_position":223.5,"text":"GCP-0-002","format":"CODE128","textPosition":"bottom","lineWidth":2,"bodyHeight":40,"fontSize":14,"displayValue":true,"data":" "},"id":"14"}]}';

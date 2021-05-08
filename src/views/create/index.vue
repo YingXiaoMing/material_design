@@ -34,7 +34,6 @@ export default {
           this.$store.dispatch('components/setComponentProperties', componentData.Properties);
           this.$store.dispatch('components/setLabelVersion', componentData.Name);
           const elementData = _.cloneDeep(componentData.ViewableControls);
-
           this.$store.dispatch('components/setPrintComponent', [elementData]);
           _.map(componentData.ViewableControls, item => {
             item.isInstance = true

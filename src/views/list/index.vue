@@ -29,7 +29,7 @@
           </div>
         </template>
       </el-col>
-      <el-col :span="24" class="pager">
+      <el-col :span="24" class="pager" v-if="vList.length > 0">
         <el-pagination :page-size="20" :page-count="10" :total="300" layout="prev, pager, next"></el-pagination>
       </el-col>
     </div>
@@ -55,12 +55,7 @@ export default {
       top: '',
       bottom: '',
       searchKey: '',
-      vList: [{
-        name: '测试标签',
-        width: 220,
-        height: 330,
-        id: '11'
-      }],
+      vList: [],
     }
   },
   created() {

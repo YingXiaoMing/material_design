@@ -70,7 +70,7 @@
 <script>
 import PageDialog from '@/components/PageDialog'
 import draggable from 'vuedraggable'
-import { mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import { showLoading, hideLoading } from '@/utils/loading'
 import CustomField from './customField.vue'
 import _ from 'lodash'
