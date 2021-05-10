@@ -1,3 +1,4 @@
+import label from '../../api/label'
 import labelService from '../../api/label'
 
 export default {
@@ -62,6 +63,28 @@ export default {
       const res = await labelService.deleteTagData(id)
       return res
     },
+    async getCustomList(ctx) {
+      const res = await labelService.getCustomList();
+      console.log(res);
+      return res.data
+    },
+    async postCustom(ctx, param) {
+      const res = await labelService.postCustom(param);
+      return res;
+    },
+    async getCustomById(ctx, id) {
+      const res = await labelService.getCustomById(id);
+      return res.data;
+    },
+    async updateCustom(ctx, param) {
+      const res = await labelService.updateCustom(param);
+      return res;
+    },
+
+
+
+
+
     setLabelVersion({ commit }, container) {
       commit('SET_LABELVERSION', container)
     },

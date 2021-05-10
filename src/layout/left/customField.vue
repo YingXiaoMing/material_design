@@ -2,22 +2,24 @@
   <div class="custom_table">
     <el-row :gutter="24">
       <el-button type="success" icon="el-icon-circle-plus-outline" class="add_custom_Btn" @click="addData">新增</el-button>
-      <div class="custom_board">
-        <el-col v-for="it in dataList" :span="24" style="marginBottom: 6px">
-          <el-col :span="6">
-            <span class="custom_table_title">{{ it.name }}</span>
-          </el-col>
-          <el-col :span="12">
-            <el-select v-model="it.model">
-              <el-option v-for="item in it.option" :label="item.label" :value="item.value" />
-            </el-select>
-          </el-col>
-          <el-col :span="6">
-            <el-button @click="editData">编辑</el-button>
-            <el-button>删除</el-button>
-          </el-col>
-        </el-col>
-      </div>
+      <el-table border height="380" highlight-current-row 
+      style="width: 99.99%" :data="dataList" :loading="loading">
+        <el-table-column label="名称" prop="name"></el-table-column>
+        <el-table-column label="数据类型" prop="type">
+          <template slot-scope="scope">
+            <span v-if="scope.row.type == 2">自定义</span>
+            <span v-if="scope.row.type == 1">基础数据</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="数据" prop="option"></el-table-column>
+        <el-table-column label="操作" prop="operation">
+          <template slot-scope="scope">
+            <el-button @click="editData(scope.row.key)" icon="el-icon-edit" size="small">编辑</el-button>
+            <el-button @click="deleteData(scope.row.key)" type="danger" icon="el-icon-delete" size="small">删除</el-button>
+          </template>
+          
+        </el-table-column>
+      </el-table>
     </el-row>
     <page-dialog
       :title="dialogInfo.title"
@@ -35,12 +37,12 @@
         <el-col :span="24">
           <el-form-item label="绑定类型:">
             <el-radio-group v-model="form.type">
-              <el-radio label="basic">自定义</el-radio>
-              <el-radio label="custom">基础数据</el-radio>
+              <el-radio label="2">基础数据</el-radio>
+              <el-radio label="1">自定义</el-radio>
             </el-radio-group>
           </el-form-item>
         </el-col>
-        <template v-if="form.type === 'custom'">
+        <template v-if="form.type === '1'">
           <e-col :span="24">
             <el-form-item label="自定义数据:">
               <el-input v-model="form.customFiled" :rows="4" type="textarea" />
@@ -55,6 +57,7 @@
 </template>
 <script>
 import PageDialog from '@/components/PageDialog'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   components: {
@@ -62,33 +65,12 @@ export default {
   },
   data() {
     return {
-      dataList: [{
-        name: '生产线',
-        model: 'line1',
-        option: [{
-          label: '一线',
-          value: 'line1'
-        }, {
-          label: '二线',
-          value: 'line2'
-        }]
-      }, {
-        name: '负责人',
-        model: 'ping1',
-        option: [{
-          label: '吴耿平',
-          value: 'ping1'
-        }, {
-          label: '吴亦凡',
-          value: 'ping2'
-        }]
-      }],
+      dataList: [],
+      loading: false,
       form: {
+        id: '',
         name: '',
-        type: 'basic',
-        origin: '生产线',
-        field: '生产线',
-        fieldContain: '生产线',
+        type: '1',
         customFiled: ''
       },
       dialogInfo: {
@@ -102,7 +84,30 @@ export default {
       }
     }
   },
+  created() {
+    this.loadData();
+  },
   methods: {
+    ...mapActions({
+      getCustomList: 'label/getCustomList',
+      postCustom: 'label/postCustom',
+      getCustomById: 'label/getCustomById',
+      updateCustom: 'label/updateCustom',
+    }),
+    loadData() {
+      this.loading = true;
+      this.getCustomList().then(res => {
+        this.loading = false;
+        this.dataList = _.map(res, item => {
+          return {
+            key: item.id,
+            name: item.name,
+            type: item.type,
+            option: item.content,
+          }
+        })
+      })
+    },
     handleClick(event, data) {
       switch (event) {
         case 'close':
@@ -113,21 +118,23 @@ export default {
             this.$message.warning('名称不能为空')
             return
           }
-          if (this.form.type === 'custom') {
-            const listData = this.form.customFiled.split(',')
-            const newData = _.map(listData, (item, i) => {
-              return {
-                label: item,
-                value: i
-              }
-            })
-            this.dataList.push({
-              name: '负责人',
-              model: newData[0].value,
-              option: newData
-            })
+          const param = {
+            name: this.form.name,
+            type: parseInt(this.form.type),
+            content: this.form.type == '1' ? this.form.customFiled : ''
           }
-          this.dialogInfo.visible = false
+          if (this.dialogInfo.type == 0) {
+            this.postCustom(param).then(() => {
+              this.dialogInfo.visible = false;
+              this.loadData();
+            });
+          } else if (this.dialogInfo.type == 1) {
+            param.id = this.form.id;
+            this.updateCustom(param).then(() => {
+              this.dialogInfo.visible = false;
+              this.loadData();
+            });
+          }          
           break
         default:
           break
@@ -136,16 +143,26 @@ export default {
     addData() {
       this.form = {
         name: '',
-        type: 'basic',
-        origin: '生产线',
-        field: '生产线',
-        fieldContain: '生产线',
-        customFiled: ''
+        type: '2',
+        customFiled: '' 
       }
-      this.dialogInfo.visible = true
+      this.dialogInfo.visible = true;
+      this.dialogInfo.type = 0;
+      this.dialogInfo.title = '新增自定义字段';
     },
-    editData() {
-      this.dialogInfo.visible = true
+    editData(id) {
+      this.getCustomById(id).then(res => {
+        this.form = {
+          id: res.id,
+          name: res.name,
+          type: res.type.toString(),
+          customFiled: res.type == 1 ? res.content: '',
+        }
+        this.dialogInfo.visible = true;
+        this.dialogInfo.type = 1;
+        this.dialogInfo.title = "编辑自定义字段";
+      });
+      
     }
   }
 }

@@ -29,8 +29,6 @@ axios.interceptors.response.use(response => {
   if (typeof response.data !== 'object') {
     return response.data
   }
-  console.log('如果是测试数据');
-  console.log(response);
   if (response.data.code != 1000) {
     errorMessage = response.data.message || '系统繁忙，请稍后重试'
   }

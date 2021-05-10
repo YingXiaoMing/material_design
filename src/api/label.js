@@ -10,5 +10,21 @@ export default {
   // 更新标签对应的内容
   updateTagData: (param) => request.put('/label', param),
   // 删除标签
-  deleteTagData: (id) => request.delete('api/Tag/' + id)
+  deleteTagData: (id) => request.delete('api/Tag/' + id),
+
+
+  // 获取自定义字段列表数据
+  getCustomList: () => request.get('/custom'),
+
+  // 新增自定义字段
+  postCustom: (param) => request.post('/custom', param),
+
+  //获取自定义字段内容
+  getCustomById: (id) => request.get('/custom/' + id),
+
+  // 更新自定义内容
+  updateCustom: (param) => request.put('/custom', param),
+
+
+
 }
