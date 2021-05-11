@@ -26,5 +26,11 @@ export default {
   updateCustom: (param) => request.put('/custom', param),
 
 
+  // 保存模板自定义字段
+  newTemplateDynamic: (param) => request.post('/TemplateDynamic', param),
+
+
+  // 根据ID获取对应模板数据
+  getTemplateDynamicDataById: (id) => request.get('/TemplateDynamic/' + id),
 
 }

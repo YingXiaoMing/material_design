@@ -68,6 +68,7 @@ export default {
     ...mapActions({
       setComponentsList: 'components/setComponentsList',
       updateTagData: 'label/updateTagData',
+      newTemplateDynamic: 'label/newTemplateDynamic',
     }),
     download() {
       this.$store.dispatch('components/setActive', '')
@@ -134,7 +135,26 @@ export default {
       };
       this.updateTagData(param).then(res => {
         this.$message.success('保存成功');
-      })
+      });
+      const macthList = _.filter(newComponentData, item => {
+        return item.type == 'TextBox' && item.properties.dataSource.origin == 'WebAPI' && !_.isEmpty(item.properties.dataSource.apiWebData)
+      });
+      const newResult = _.map(macthList, item => {
+        return {
+          customId: item.properties.dataSource.apiWebData,
+          componentId: item.id
+        }
+      });
+      if (newResult.length > 0) {
+        const newParam = {
+          id: this.components.operateId,
+          templateList: newResult
+        };
+        this.newTemplateDynamic(newParam).then(res => {
+          // this.$message.success('新增成功');
+        })
+      }
+    
       // window.localStorage.setItem('app_components', res);
       // this.$message.success('保存成功');
     }

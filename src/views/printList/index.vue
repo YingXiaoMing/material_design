@@ -2,10 +2,9 @@
     <div class="app-container">
         <div class="filter-container">
             <el-button type="primary" icon="el-icon-circle-plus-outline" @click="addData">新增产品</el-button>
-            <!-- <el-button type="warning" icon="el-icon-edit" @click="editData">编辑产品</el-button>
-            <el-button type="danger" icon="el-icon-delete" @click="delData">删除产品</el-button> -->
             <el-button type="el-icon-printer" @click="printAssign">打印选中的产品</el-button>
             <el-button icon="el-icon-printer" @click="printAll">打印全部产品</el-button>
+            <el-button @click="backList">返回标签列表</el-button>
         </div>
         <page-table :table="dataTable" @handleEvent="handleEvent"></page-table>
         <hidden-area :printData="printData"></hidden-area>
@@ -52,12 +51,21 @@ import PageTable from '@/components/PageTable';
 import HiddenArea from '@/layout/printArea/index';
 import { showLoading, hideLoading } from '@/utils/loading';
 import PageDialog from '@/components/PageDialog'
+import { mapActions } from 'vuex'
 import _ from 'lodash';
 export default {
     components: {
         PageTable,
         HiddenArea,
         PageDialog,
+    },
+    created() {
+        const ids = this.$route.query.id;
+        if (ids) {
+            this.getTemplateDynamicDataById(ids).then(res => {
+                console.log(res);
+            });
+        }
     },
     data() {
         return {
@@ -161,6 +169,9 @@ export default {
         }
     },
     methods: {
+        ...mapActions({
+            getTemplateDynamicDataById: 'label/getTemplateDynamicDataById'
+        }),
         handleClick(event, data) {
             switch (event) {
                 case 'close':
@@ -197,6 +208,11 @@ export default {
                 });
                 this.dataTable.data.splice(index,1);
             }
+        },
+        backList() {
+            this.$router.push({
+                name: 'List'
+            });
         },
         editData() {
             if (this.checkedSelect()) {

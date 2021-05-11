@@ -4,8 +4,8 @@
       <el-button type="success" icon="el-icon-circle-plus-outline" class="add_custom_Btn" @click="addData">新增</el-button>
       <el-table border height="380" highlight-current-row 
       style="width: 99.99%" :data="dataList" :loading="loading">
-        <el-table-column label="名称" prop="name"></el-table-column>
-        <el-table-column label="数据类型" prop="type">
+        <el-table-column label="名称" prop="name" width="120px"></el-table-column>
+        <el-table-column label="数据类型" prop="type" width="88px">
           <template slot-scope="scope">
             <span v-if="scope.row.type == 2">自定义</span>
             <span v-if="scope.row.type == 1">基础数据</span>

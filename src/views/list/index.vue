@@ -14,7 +14,7 @@
                 <span style="font-weight: bold">{{ item.name }}</span>
                 <div class="right">
                   <i class="el-icon-edit label_icon" @click="toEdit(item.id)"></i>
-                  <i class="el-icon-printer label_icon" @click="toPrint"></i>
+                  <i class="el-icon-printer label_icon" @click="toPrint(item.id)"></i>
                   <i class="el-icon-delete label_icon" style="color:red"></i>
                 </div>
               </div>
@@ -29,9 +29,9 @@
           </div>
         </template>
       </el-col>
-      <el-col :span="24" class="pager" v-if="vList.length > 0">
+      <!-- <el-col :span="24" class="pager" v-if="vList.length > 0">
         <el-pagination :page-size="20" :page-count="10" :total="300" layout="prev, pager, next"></el-pagination>
-      </el-col>
+      </el-col> -->
     </div>
   </div>
 </template>
@@ -109,9 +109,12 @@ export default {
         }
       });
     },
-    toPrint() {
+    toPrint(id) {
       this.$router.push({
-        name: 'PrintList'
+        name: 'PrintList',
+        query: {
+          id
+        }
       })
     },
     printData() {

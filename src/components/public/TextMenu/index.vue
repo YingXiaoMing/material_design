@@ -13,7 +13,8 @@
             </template>
             <template v-if="currentComponent.properties.dataSource.origin === 'WebAPI'" >
                 <el-form-item label="绑定字段:">
-                    <el-select v-model="currentComponent.properties.dataSource.apiWebData" style="width: 100%">
+                    <el-select v-model="currentComponent.properties.dataSource.apiWebData" 
+                    style="width: 100%" @focus="focusHandle">
                       <el-option v-for="item in dynamicOption" :label="item.label" :value="item.value"></el-option>
                     </el-select>
                 </el-form-item>
@@ -24,12 +25,12 @@
                     v-model="currentComponent.properties.dataSource.formular"></el-input>
                 </el-form-item>
             </template>
-            <template v-if="currentComponent.properties.dataSource.origin === 'DropdownOptions'">
+            <!-- <template v-if="currentComponent.properties.dataSource.origin === 'DropdownOptions'">
                 <el-form-item label="自定义数据:">
                     <el-input v-model="currentComponent.properties.dataSource.option" :rows="4" type="textarea"></el-input>
                     <div style="fontSize: 13px">（数据以逗号形式隔开，例如<span style="color:red">名称，规格，大小</span>）</div>
                 </el-form-item>
-            </template>
+            </template> -->
             
             <el-form-item label="对齐方式:">
                 <el-select size="small" v-model="currentComponent.properties.align" style="width: 100%" placeholder="请选择对齐方式">
@@ -59,7 +60,8 @@
     </div>
 </template>
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex'
+import _ from 'lodash';
 export default {
     props: {
         component: {
@@ -75,6 +77,9 @@ export default {
             const { id = '' } = this.activeComponent;
             return this.storeList.find((item) => item.id === id);
         }
+    },
+    created() {
+        this.loadDynamicData();
     },
     data() {
         return {
@@ -92,16 +97,7 @@ export default {
                     value: 'center'
                 }
             ],
-            dynamicOption: [{
-                value: 'employeeName',
-                label: '员工姓名'
-            }, {
-                value: 'productLine',
-                label: '生产线'
-            }, {
-                value: 'machiner',
-                label: '机长'
-            }],
+            dynamicOption: [],
             lineHeightOptions: [
                 {
                     label: '1倍',
@@ -118,18 +114,18 @@ export default {
             ],
             // EndUserInput 用户自定义文本  DropdownOptions 自定义选项
             // WebAPI  后台绑定字段  Formular  计算字段
+            // label: '自定义选项',
+            // value: 'DropdownOptions'
+            // label: '计算字段'
+            // value: 'Formular'
+            
+
             fieldOption: [{
                 label: '自定义字段',
                 value: 'EndUserInput'
             }, {
                 label: '动态字段',
                 value: 'WebAPI'
-            }, {
-                label: '计算字段',
-                value: 'Formular'
-            }, {
-                label: '自定义选项',
-                value: 'DropdownOptions'
             }],
             fontSizeOptions: [
                 {
@@ -182,10 +178,26 @@ export default {
         }
     },
     methods: {
+        ...mapActions({
+            getCustomList: 'label/getCustomList',
+        }),
+        focusHandle() {
+            this.loadDynamicData();
+        },
         handleCustomField(val) {
             if (val) {
                 this.currentComponent.properties.text = '自定义字段';
             }
+        },
+        loadDynamicData() {
+            this.getCustomList().then(res => {
+                this.dynamicOption = _.map(res, item => {
+                    return {
+                        value: item.id,
+                        label: item.name
+                    }
+                })
+            })
         }
     }
 }

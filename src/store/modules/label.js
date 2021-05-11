@@ -80,6 +80,14 @@ export default {
       const res = await labelService.updateCustom(param);
       return res;
     },
+    async newTemplateDynamic(ctx, param) {
+      const res = await labelService.newTemplateDynamic(param);
+      return res;
+    },
+    async getTemplateDynamicDataById(ctx, id) {
+      const res = await labelService.getTemplateDynamicDataById(id);
+      return res.data;
+    },
 
 
 

@@ -41,7 +41,7 @@ const state = {
         color: '#000',
         dataSource: {
           origin: 'EndUserInput',
-          apiWebData: 'employeeName',
+          apiWebData: '',
           formular: '',
           option: ''
         }
