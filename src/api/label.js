@@ -1,3 +1,4 @@
+import { param } from '@/utils'
 import request from '@/utils/request'
 
 export default {
@@ -32,5 +33,11 @@ export default {
 
   // 根据ID获取对应模板数据
   getTemplateDynamicDataById: (id) => request.get('/TemplateDynamic/' + id),
+
+
+  // 新增模板数据
+  newDynamicMaterial: (param) => request.post('/DynamicMaterial', param),
+
+  getDynamicMaterialById: (id) => request.get('DynamicMaterial/' + id),
 
 }

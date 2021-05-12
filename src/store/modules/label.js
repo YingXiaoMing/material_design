@@ -88,8 +88,14 @@ export default {
       const res = await labelService.getTemplateDynamicDataById(id);
       return res.data;
     },
-
-
+    async newDynamicMaterial(ctx, param) {
+      const res = await labelService.newDynamicMaterial(param);
+      return res;
+    },
+    async getDynamicMaterialById(ctx, id) {
+      const res = await labelService.getDynamicMaterialById(id);
+      return res.data;
+    },
 
 
 
