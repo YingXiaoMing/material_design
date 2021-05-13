@@ -212,21 +212,11 @@ export default {
         url,
         timeout,
         responseType: responseType,
-        // data: param,
         cancelToken: new CancelToken(c => {
           cancel = c
         })
       }).then(res => {
         resolve(res)
-        // if (!utils.IsStringNull(JSON.stringify(res)) && res.code == '1') {
-        //   resolve(res)
-        // } else {
-        //   iView.Notice.error({
-        //     title: res.data || '系统错误',
-        //     duration: 3
-        //   })
-        //   reject(res)
-        // }
       }).catch(function(error) {
         reject(error)
       })

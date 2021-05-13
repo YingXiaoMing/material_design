@@ -2,7 +2,7 @@
     <div class="app-container">
         <template v-if="dataTable.tr.length > 0">
             <div class="filter-container">
-                <el-button type="primary" icon="el-icon-circle-plus-outline" @click="addData">新增产品</el-button>
+                <el-button type="primary" icon="el-icon-circle-plus-outline" @click="addData">新增</el-button>
                 <el-button type="el-icon-printer" @click="printAssign">打印选中的产品</el-button>
                 <el-button icon="el-icon-printer" @click="printAll">打印全部产品</el-button>
                 <el-button @click="backList">返回标签列表</el-button>
@@ -37,6 +37,7 @@ import { showLoading, hideLoading } from '@/utils/loading';
 import PageDialog from '@/components/PageDialog'
 import { mapActions } from 'vuex'
 import _ from 'lodash';
+import { param } from '@/utils';
 export default {
     components: {
         PageTable,
@@ -61,7 +62,7 @@ export default {
                 date: '',
             },
             dialogInfo: {
-                title: '新增产品',
+                title: '新增',
                 visible: false,
                 type: 0, //  0代表新增  1代表编辑
                 bList: [
@@ -83,7 +84,7 @@ export default {
                 hasOperation: true,
                 hasSelection: true,
                 hasNumber: true,
-                height: 468,
+                height: 768,
                 refresh: 1, // 刷新
                 operation: {
                     label: '操作',
@@ -112,7 +113,9 @@ export default {
             getTemplateDynamicDataById: 'label/getTemplateDynamicDataById',
             newDynamicMaterial: 'label/newDynamicMaterial',
             getDynamicMaterialById: 'label/getDynamicMaterialById',
+            updateDynamicMaterial: 'label/updateDynamicMaterial',
             getTagContainById: 'label/getTagContainById',
+            deleteDynamicMaterialById: 'label/deleteDynamicMaterialById',
         }),
         loadAllData() {
             this.loadHeaderData();
@@ -123,7 +126,10 @@ export default {
             if (ids) {
                 this.getDynamicMaterialById(ids).then(res => {
                     this.dataTable.data = _.map(res, item => {
-                        return JSON.parse(item.dynamicData)
+                        return {
+                            id: item.id,
+                            ...JSON.parse(item.dynamicData)
+                        }
                     });
                 })
             }
@@ -160,21 +166,32 @@ export default {
                     break;
                 case 'save':
                     const ids = this.$route.query.id;
+                    const param = {
+                        TemplateId: ids,
+                        DynamicData: JSON.stringify(this.formInfo.data),
+                    };
                     if (ids) {
-                        if (this.dialogInfo.type == 0) {
+                        if (this.dialogInfo.type == 0) {  // 新增
                             console.log(this.formInfo.data);
-                            const param = {
-                                TemplateId: ids,
-                                DynamicData: JSON.stringify(this.formInfo.data),
-                            };
+                            
                             this.newDynamicMaterial(param).then(res => {
                                 this.dialogInfo.visible = false;
                                 this.$message.success('新增成功');
                                 this.loadAllData();
                             })
+                        } else {
+                            // 编辑
+                            param.id = this.formInfo.data.id;
+                            console.log(this.formInfo);
+                            this.updateDynamicMaterial(param).then(res => {
+                                this.dialogInfo.visible = false;
+                                this.$message.success('更新成功');
+                                this.loadAllData();
+                            })
                         }
                     }
                     break;
+                
                 default:
                     break;
             }
@@ -258,7 +275,7 @@ export default {
                             list: item.content.split('，')
                         }
                     });
-                    this.dialogInfo.title = '新增产品';
+                    this.dialogInfo.title = '新增';
                     this.dialogInfo.visible = true;
                     this.dialogInfo.type = 0; // 新增
                 })
@@ -284,24 +301,30 @@ export default {
                     this.multipleSelection = data;
                     break;
                 case 'editData':
-                    const index = this.dataTable.data.findIndex(item => {
-                        return item.id == data.id
-                    });
-                    this.index = index;
-                    this.form.machineName = data.machineName;
-                    this.form.machineNum = data.machineNum;
-                    this.form.companyName = data.companyName;
-                    this.form.user = data.user;
-                    this.form.date = data.date;
+                    console.log(data);
+                    const copyData = _.cloneDeep(data);
+                    this.formInfo.data = copyData;
                     this.dialogInfo.type = 1;
                     this.dialogInfo.title = '编辑产品';
                     this.dialogInfo.visible = true;
+                    // const index = this.dataTable.data.findIndex(item => {
+                    //     return item.id == data.id
+                    // });
+                    // this.index = index;
+                    // this.form.machineName = data.machineName;
+                    // this.form.machineNum = data.machineNum;
+                    // this.form.companyName = data.companyName;
+                    // this.form.user = data.user;
+                    // this.form.date = data.date;
+                    // this.dialogInfo.type = 1;
+                    // this.dialogInfo.title = '编辑产品';
+                    // this.dialogInfo.visible = true;
                     break;
                 case 'deleteData':
-                    const newIndex = this.dataTable.data.findIndex(item => {
-                        return item.id == data.id
+                    this.deleteDynamicMaterialById(data.id).then(res => {
+                        this.$message.success('删除成功');
+                        this.loadAllData();
                     });
-                    this.dataTable.data.splice(newIndex,1);
                     break;
                 default:
                     break;

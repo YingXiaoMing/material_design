@@ -49,7 +49,7 @@ export default {
     },
     async postTagData(ctx, param) {
       const res = await labelService.postTagData(param)
-      return res
+      return res.data;
     },
     async getTagContainById(ctx, id) {
       const res = await labelService.getTagContainById(id)
@@ -96,9 +96,14 @@ export default {
       const res = await labelService.getDynamicMaterialById(id);
       return res.data;
     },
-
-
-
+    async deleteDynamicMaterialById(ctx, param) {
+      const res = await labelService.deleteDynamicMaterialById(param);
+      return res;
+    },
+    async updateDynamicMaterial(ctx, param) {
+      const res = await labelService.updateDynamicMaterial(param);
+      return res;
+    },
     setLabelVersion({ commit }, container) {
       commit('SET_LABELVERSION', container)
     },

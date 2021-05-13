@@ -11,8 +11,9 @@ export default {
   // 更新标签对应的内容
   updateTagData: (param) => request.put('/label', param),
   // 删除标签
-  deleteTagData: (id) => request.delete('api/Tag/' + id),
+  deleteTagData: (id) => request.delete('/label?id=' + id),
 
+  
 
   // 获取自定义字段列表数据
   getCustomList: () => request.get('/custom'),
@@ -26,7 +27,6 @@ export default {
   // 更新自定义内容
   updateCustom: (param) => request.put('/custom', param),
 
-
   // 保存模板自定义字段
   newTemplateDynamic: (param) => request.post('/TemplateDynamic', param),
 
@@ -38,6 +38,11 @@ export default {
   // 新增模板数据
   newDynamicMaterial: (param) => request.post('/DynamicMaterial', param),
 
-  getDynamicMaterialById: (id) => request.get('DynamicMaterial/' + id),
+  getDynamicMaterialById: (id) => request.get('/DynamicMaterial/' + id),
+
+  deleteDynamicMaterialById: (param) => request.delete('/DynamicMaterial?id=' + param),
+
+  updateDynamicMaterial: (param) => request.put('/DynamicMaterial', param),
+  
 
 }

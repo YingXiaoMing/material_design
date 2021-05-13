@@ -3,7 +3,7 @@
     <div class="filter-container">
       <el-input v-model="searchKey" placeholder="输入名字查询模板" style="width: 220px"></el-input>
       <el-button type="primary" style="marginLeft: 10px">查询</el-button>
-      <el-button type="success" style="marginLeft: 10px">新增</el-button>
+      <el-button type="success" style="marginLeft: 10px" @click="addData">新增</el-button>
     </div>
     <div class="filter-container">
       <el-col :span="24">
@@ -15,7 +15,7 @@
                 <div class="right">
                   <i class="el-icon-edit label_icon" @click="toEdit(item.id)"></i>
                   <i class="el-icon-printer label_icon" @click="toPrint(item.id)"></i>
-                  <i class="el-icon-delete label_icon" style="color:red"></i>
+                  <i class="el-icon-delete label_icon" style="color:red" @click="del(item.id)"></i>
                 </div>
               </div>
               <div class="img-div">
@@ -33,16 +33,29 @@
         <el-pagination :page-size="20" :page-count="10" :total="300" layout="prev, pager, next"></el-pagination>
       </el-col> -->
     </div>
+    <page-dialog
+      :title="dialogInfo.title"
+      :b-list="dialogInfo.bList"
+      :visible.sync="dialogInfo.visible"
+      width="448px"
+      @handleClick="handleClick"
+    >
+      <el-form :model="form" inline>
+        <el-form-item label="名称:">
+          <el-input v-model="form.name" style="width: 220px"></el-input>
+        </el-form-item>
+      </el-form>
+    </page-dialog>
   </div>
 </template>
 <script>
 import PageDialog from '@/components/PageDialog'
 import { mapGetters, mapActions } from 'vuex'
 import Drag from '@/components/DragShow'
-
 export default {
   components: {
-    Drag
+    Drag,
+    PageDialog,
   },
   computed: {
     ...mapGetters(['storeList'])
@@ -56,26 +69,28 @@ export default {
       bottom: '',
       searchKey: '',
       vList: [],
+      form: {
+        name: ''
+      },
+      dialogInfo: {
+        title: '新增标签',
+        visible: false,
+        type: 0, //  0代表新增  1代表编辑
+        bList: [
+          { label: '关闭', show: true, event: 'close' },
+          { label: '保存', show: true, event: 'save' }
+        ]
+      }
     }
   },
   created() {
-    this.getTagList().then(res => {
-      this.vList = _.map(res, item => {
-        const componentData =  JSON.parse(item.content);
-        const width = componentData.Properties.paperWidth;
-        const height = componentData.Properties.paperHeight;
-        return {
-          name: item.name,
-          width: width,
-          height: height,
-          id: item.id,
-        }
-      });
-    });
+    this.loadData();
   },
   methods: {
     ...mapActions({
       getTagList: 'label/getTagList',
+      deleteTagData: 'label/deleteTagData',
+      postTagData: 'label/postTagData',
     }),
     handleClick(event, data) {
       switch (event) {
@@ -83,14 +98,48 @@ export default {
           this.dialogInfo.visible = false
           break
         case 'save':
-          this.dialogInfo.visible = false
+          const param = {
+            name: this.form.name,
+            content: ''
+          };
+          this.postTagData(param).then(res => {
+            console.log(res);
+            this.dialogInfo.visible = false;
+            this.loadData();
+          })
+          // this.dialogInfo.visible = false
           break
         default:
           break
       }
     },
+    loadData() {
+      this.getTagList().then(res => {
+        this.vList = _.map(res, item => {
+          let width, height;
+          if (_.isEmpty(item.content)) {
+            width = 500;
+            height = 500;
+          } else {
+            const componentData =  JSON.parse(item.content);
+            width = componentData.Properties.paperWidth;
+            height = componentData.Properties.paperHeight;
+          }
+          return {
+            name: item.name,
+            width: width,
+            height: height,
+            id: item.id,
+          }
+        });
+      });
+    },
+    addData() {
+      this.form.name = '';
+      this.dialogInfo.visible = true;
+    },
     searchData() {
-      this.dialogInfo.visible = true
+      this.dialogInfo.visible = true;
       this.initLayoutData()
     },
     editData() {
@@ -100,8 +149,6 @@ export default {
       window.open(routeData.href, '_blank')
     },
     toEdit(id) {
-      console.log('nonstop');
-      console.log(id);
       this.$router.push({
         name: 'Create',
         query: {
@@ -116,6 +163,19 @@ export default {
           id
         }
       })
+    },
+    del(id) {
+      this.$confirm('请确认是否删除该标签', '提示', {
+        confirmButtonText: '删除',
+        cancelButtonText: '返回',
+        type: 'warning'
+      }).then(() => {
+        this.deleteTagData(id).then(res => {
+          this.$message.success('删除成功');
+          this.loadData();
+        });
+      });
+      
     },
     printData() {
       this.$pdf('star_moban')
