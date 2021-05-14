@@ -84,6 +84,7 @@ export default {
     }
   },
   created() {
+    console.log('分支创建成功');
     this.loadData();
   },
   methods: {
