@@ -266,14 +266,6 @@ const state = {
             }
           },
           {
-            title: '文本框',
-            id: 'customInput',
-            icon: 'wenben',
-            component: {
-              type: 'LabelBox'
-            }
-          },
-          {
             title: '横线',
             id: 'xLine',
             icon: 'hengxian',
@@ -303,14 +295,6 @@ const state = {
             icon: 'icon-life-barcode',
             component: {
               type: 'BarCode'
-            }
-          },
-          {
-            title: '表单',
-            id: 'customTable',
-            icon: 'table',
-            component: {
-              type: 'Grid'
             }
           },
           {

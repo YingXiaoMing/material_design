@@ -11,35 +11,6 @@
           </draggable>
         </template>
       </el-collapse-item>
-      <!-- <el-collapse-item name="LabelVersion" title="标签版本">
-        <div class="Label_Version">
-          <el-form :model="model">
-            <el-form-item label="标签版本:">
-              <el-select
-                v-model="model.version"
-                placeholder="请选择标签版本"
-                style="width: 176px"
-                @click.native="getOptionData"
-                @change="handleSelectChange"
-              >
-                <el-option v-for="item in versionOption" :label="item.label" :value="item.value" />
-              </el-select>
-            </el-form-item>
-            <el-form-item>
-              <el-button style="width: 140px" type="info" @click="addLabelVersion">新增标签版本</el-button>
-              <el-button style="width: 140px" type="info">复制标签版本</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-button style="width: 140px" type="info" @click="setDefaultLabel">设置默认标签</el-button>
-              <el-button style="width: 140px" type="info" @click="addNewField">自定义字段</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-button style="width: 140px" type="primary" icon="el-icon-check" @click="saveLabelData">保存标签版本</el-button>
-              <el-button style="width: 140px" type="danger" icon="el-icon-delete" @click="deleteLabelData">删除标签版本</el-button>
-            </el-form-item>
-          </el-form>
-        </div>
-      </el-collapse-item> -->
     </el-collapse>
     <page-dialog
       :title="dialogInfo.title"
