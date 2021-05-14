@@ -1,5 +1,5 @@
 module.exports = {
-  title: '新感觉智能管理系统',
+  title: '标签管理系统',
 
   /**
    * @type {boolean} true | false

@@ -1,7 +1,7 @@
 <template>
   <div id="nav-warp">
     <div class="logo-area">
-      新感觉设计系统
+      设计系统
     </div>
     <div class="handle-area">
       <div class="preview-btn" @click="toList">
