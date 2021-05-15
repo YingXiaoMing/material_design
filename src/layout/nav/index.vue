@@ -16,10 +16,6 @@
         <svg-icon icon-class="save" />
         <span>保存模板</span>
       </div>
-      <!-- <div class="preview-btn" @click="download">
-        <i class="el-icon-reading" />
-        <span>打印预览</span>
-      </div> -->
       <div class="preview-btn" @click="clearData">
         <i class="el-icon-magic-stick" />
         <span>清空画布</span>

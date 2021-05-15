@@ -2,7 +2,7 @@
   <div class="app-container">
     <div class="filter-container">
       <el-input v-model="searchKey" placeholder="输入名字查询模板" style="width: 220px"></el-input>
-      <el-button type="primary" style="marginLeft: 10px">查询</el-button>
+      <el-button type="primary" style="marginLeft: 10px" @click="searchData">查询</el-button>
       <el-button type="success" style="marginLeft: 10px" @click="addData">新增</el-button>
     </div>
     <div class="filter-container">
@@ -92,6 +92,33 @@ export default {
       deleteTagData: 'label/deleteTagData',
       postTagData: 'label/postTagData',
     }),
+    searchData() {
+      const param = {
+        key: this.searchKey
+      };
+      this.getTagList(param).then(res => {
+        this.vList = _.map(res, item => {
+          let width, height;
+          if (_.isEmpty(item.content)) {
+            width = 500;
+            height = 500;
+          } else {
+            const componentData =  JSON.parse(item.content);
+            width = componentData.Properties.paperWidth;
+            height = componentData.Properties.paperHeight;
+          }
+          return {
+            name: item.name,
+            width: width,
+            height: height,
+            id: item.id,
+          }
+        });
+      })
+
+      console.log('Hello Venus');
+      console.log(this.searchKey);
+    },
     handleClick(event, data) {
       switch (event) {
         case 'close':
@@ -137,10 +164,6 @@ export default {
     addData() {
       this.form.name = '';
       this.dialogInfo.visible = true;
-    },
-    searchData() {
-      this.dialogInfo.visible = true;
-      this.initLayoutData()
     },
     editData() {
       const routeData = this.$router.resolve({

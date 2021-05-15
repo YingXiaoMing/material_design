@@ -43,8 +43,8 @@ export default {
 
   },
   actions: {
-    async getTagList(ctx) {
-      const res = await labelService.getTagList()
+    async getTagList(ctx, param) {
+      const res = await labelService.getTagList(param);
       return res.data
     },
     async postTagData(ctx, param) {

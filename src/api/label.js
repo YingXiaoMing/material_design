@@ -3,7 +3,7 @@ import request from '@/utils/request'
 
 export default {
   // 获取标签列表数据
-  getTagList: () => request.get('/label'),
+  getTagList: (param) => request.get('/label',param),
   // 新增标签
   postTagData: (param) => request.post('/label', param),
   // 获取标签对应的内容
@@ -12,8 +12,6 @@ export default {
   updateTagData: (param) => request.put('/label', param),
   // 删除标签
   deleteTagData: (id) => request.delete('/label?id=' + id),
-
-  
 
   // 获取自定义字段列表数据
   getCustomList: () => request.get('/custom'),
@@ -30,10 +28,8 @@ export default {
   // 保存模板自定义字段
   newTemplateDynamic: (param) => request.post('/TemplateDynamic', param),
 
-
   // 根据ID获取对应模板数据
   getTemplateDynamicDataById: (id) => request.get('/TemplateDynamic/' + id),
-
 
   // 新增模板数据
   newDynamicMaterial: (param) => request.post('/DynamicMaterial', param),
